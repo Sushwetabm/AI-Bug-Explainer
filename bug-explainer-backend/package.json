@@ -1,13 +1,20 @@
 {
   "name": "bug-explainer-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Backend for AI Bug Explainer application",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "test": "cross-env NODE_ENV=test jest --runInBand --detectOpenHandles",
+    "test:watch": "npm run test -- --watch",
+    "lint": "eslint .",
+    "format": "prettier --write \"**/*.{js,json,md}\"",
+    "db:migrate": "node scripts/migrate.js",
+    "db:seed": "node scripts/seed.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Sushweta",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.2",
@@ -31,5 +38,15 @@
     "nodemon": "^3.1.10",
     "prettier": "^3.5.3",
     "supertest": "^7.1.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/tests/"
+    ],
+    "setupFilesAfterEnv": [
+      "./tests/setup.js"
+    ]
   }
 }
