@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-const { toJSON } = require("./plugins");
+const toJSON = require("./plugins/toJSON");
 
 const userSchema = mongoose.Schema(
   {

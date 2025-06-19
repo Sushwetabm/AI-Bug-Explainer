@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { toJSON } = require("./plugins");
+const toJSON = require("./plugins/toJSON");
 
 const bugReportSchema = mongoose.Schema(
   {

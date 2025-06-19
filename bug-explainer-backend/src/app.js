@@ -3,8 +3,13 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
-const { errorHandler } = require("./middleware/errorHandler");
-const { notFoundHandler } = require("./middleware/notFoundHandler");
+//const { errorHandler } = require("./middleware/errorHandler");
+const {
+  errorHandler,
+  errorConverter,
+  errorLogger,
+} = require("./middleware/errorHandler");
+const notFoundHandler = require("./middleware/notFoundHandler");
 const logger = require("./utils/logger");
 const routes = require("./routes");
 const { swaggerSetup } = require("./config/swagger");
@@ -50,7 +55,8 @@ app.get("/health", (req, res) => {
 // 404 handler
 app.use(notFoundHandler);
 
-// Error handler
+app.use(errorConverter);
+app.use(errorLogger);
 app.use(errorHandler);
 
 module.exports = app;

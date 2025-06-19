@@ -10,12 +10,14 @@ module.exports = {
     options: {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
+      //useCreateIndex: true,
+      //useFindAndModify: false,
     },
   },
   jwt: {
-    secret: JWT_SECRET || "your-secret-key",
+    secret:
+      JWT_SECRET ||
+      "05bb1fc0451762778d279b146e45e6c961ffcc29d9b51816ac599c7616f5fa47",
     expiresIn: JWT_EXPIRE || "1h",
   },
   mlService: {

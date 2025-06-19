@@ -1,10 +1,10 @@
 const app = require("./src/app");
-const { PORT } = require("./src/config");
+const { port } = require("./src/config");
 const logger = require("./src/utils/logger");
 
 // Start the server
-const server = app.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT}`);
+const server = app.listen(port, () => {
+  logger.info(`Server running on port ${port}`);
 });
 
 // Handle unhandled promise rejections

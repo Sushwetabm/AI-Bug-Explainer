@@ -1,6 +1,6 @@
 const httpStatus = require("http-status");
 const jwt = require("jsonwebtoken");
-const { jwt } = require("../../config");
+const config = require("../config"); // Changed import style
 const ApiError = require("../utils/ApiError");
 
 const auth =
@@ -19,7 +19,7 @@ const auth =
     }
 
     try {
-      const payload = jwt.verify(token, jwt.secret);
+      const payload = jwt.verify(token, config.jwt.secret); // Updated reference
       req.user = payload;
       return next();
     } catch (err) {
