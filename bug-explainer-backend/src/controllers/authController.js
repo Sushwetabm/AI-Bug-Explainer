@@ -19,11 +19,12 @@ const register = async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.error("Registration error:", error);
+    //console.error("Registration error:", error);
     next(error);
   }
 };
 
+//I WORK
 // const login = async (req, res, next) => {
 //   try {
 //     const { email, password } = req.body;
@@ -41,26 +42,26 @@ const register = async (req, res, next) => {
 //       },
 //     });
 //   } catch (error) {
-//     // Remove the console.error or keep it only for development
-//     if (process.env.NODE_ENV !== "test") {
-//       console.error("Login error details:", {
-//         message: error.message,
-//         statusCode: error.statusCode,
-//         isApiError: error instanceof ApiError,
-//         stack: error.stack,
+//     // Specifically handle authentication errors
+//     if (error.message === "Incorrect email or password") {
+//       return res.status(401).json({
+//         success: false,
+//         error: {
+//           code: 401,
+//           message: error.message,
+//           ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
+//         },
 //       });
 //     }
-//     next(error); // This will go to your error handler middleware
+//     next(error);
 //   }
 // };
-
-//I WORK
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await authService.login(email, password);
     const tokens = await authService.generateAuthTokens(user);
-    res.json({
+    res.status(httpStatus.OK).json({
       success: true,
       data: {
         user: {
@@ -72,20 +73,10 @@ const login = async (req, res, next) => {
       },
     });
   } catch (error) {
-    // Specifically handle authentication errors
-    if (error.message === "Incorrect email or password") {
-      return res.status(401).json({
-        success: false,
-        error: {
-          code: 401,
-          message: error.message,
-          ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
-        },
-      });
-    }
     next(error);
   }
 };
+
 const getProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);
