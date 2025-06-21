@@ -1,7 +1,7 @@
 const httpStatus = require("http-status").default;
 const logger = require("../utils/logger");
 const ApiError = require("../utils/ApiError");
-console.log("httpStatus:", httpStatus);
+
 const errorConverter = (err, req, res, next) => {
   let error = err;
 
@@ -44,8 +44,6 @@ const errorLogger = (err, req, res, next) => {
   next(err);
 };
 const errorHandler = (err, req, res, next) => {
-  console.error(">>> errorHandler received err:", err);
-  console.error(">>> err.statusCode:", err.statusCode);
   // If headers already sent, delegate to default Express handler
   if (res.headersSent) {
     return next(err);

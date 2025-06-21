@@ -13,49 +13,16 @@ const register = async (req, res, next) => {
         user: {
           id: user.id,
           email: user.email,
-          created_at: user.created_at,
+          created_at: user.createdAt,
         },
         token: tokens.access.token,
       },
     });
   } catch (error) {
-    //console.error("Registration error:", error);
     next(error);
   }
 };
 
-//I WORK
-// const login = async (req, res, next) => {
-//   try {
-//     const { email, password } = req.body;
-//     const user = await authService.login(email, password);
-//     const tokens = await authService.generateAuthTokens(user);
-//     res.json({
-//       success: true,
-//       data: {
-//         user: {
-//           id: user.id,
-//           email: user.email,
-//           created_at: user.created_at,
-//         },
-//         token: tokens.access.token,
-//       },
-//     });
-//   } catch (error) {
-//     // Specifically handle authentication errors
-//     if (error.message === "Incorrect email or password") {
-//       return res.status(401).json({
-//         success: false,
-//         error: {
-//           code: 401,
-//           message: error.message,
-//           ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
-//         },
-//       });
-//     }
-//     next(error);
-//   }
-// };
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -67,7 +34,7 @@ const login = async (req, res, next) => {
         user: {
           id: user.id,
           email: user.email,
-          created_at: user.created_at,
+          created_at: user.createdAt,
         },
         token: tokens.access.token,
       },
@@ -89,7 +56,7 @@ const getProfile = async (req, res, next) => {
         user: {
           id: user.id,
           email: user.email,
-          created_at: user.created_at,
+          created_at: user.createdAt,
         },
       },
     });
