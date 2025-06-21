@@ -1,10 +1,11 @@
-const httpStatus = require("http-status");
+const httpStatus = require("http-status").default;
 const jwt = require("jsonwebtoken");
 const config = require("../config");
 const ApiError = require("../utils/ApiError");
 const User = require("../models/User");
 const crypto = require("crypto");
 const Token = require("../models/Token");
+const bcrypt = require("bcrypt");
 
 const register = async (userBody) => {
   if (await User.isEmailTaken(userBody.email)) {

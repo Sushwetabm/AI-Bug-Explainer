@@ -1,7 +1,7 @@
 const Joi = require("joi");
 //const { validate } = require("../utils/validate");
 const ApiError = require("../utils/ApiError");
-const httpStatus = require("http-status");
+const httpStatus = require("http-status").default;
 
 const pick = (object, keys) => {
   return keys.reduce((obj, key) => {
