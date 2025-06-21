@@ -106,9 +106,35 @@ const getProfile = async (req, res, next) => {
     next(error);
   }
 };
+const forgotPassword = async (req, res, next) => {
+  try {
+    const resetLink = await authService.forgotPassword(req.body.email);
+    res.status(httpStatus.OK).json({
+      success: true,
+      message: "Reset link sent",
+      resetLink, // In production, you’d email this instead
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const resetPassword = async (req, res, next) => {
+  try {
+    const { token, password } = req.body;
+    await authService.resetPassword(token, password);
+    res
+      .status(httpStatus.OK)
+      .json({ success: true, message: "Password reset successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   register,
   login,
   getProfile,
+  forgotPassword,
+  resetPassword,
 };
