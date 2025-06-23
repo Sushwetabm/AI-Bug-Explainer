@@ -1,4 +1,4 @@
-const httpStatus = require("http-status");
+const httpStatus = require("http-status").default;
 const { ObjectId } = require("mongoose").Types;
 const ApiError = require("../utils/ApiError");
 const CodeAnalysis = require("../models/CodeAnalysis");

@@ -1,4 +1,4 @@
-const httpStatus = require("http-status");
+const httpStatus = require("http-status").default;
 const jwt = require("jsonwebtoken");
 const config = require("../config"); // Changed import style
 const ApiError = require("../utils/ApiError");

@@ -1,11 +1,15 @@
-const httpStatus = require('http-status');
-const ApiError = require('../utils/ApiError');
-const { analysisService } = require('../services');
+const httpStatus = require("http-status").default;
+const ApiError = require("../utils/ApiError");
+const { analysisService } = require("../services");
 
 const submitCode = async (req, res, next) => {
   try {
     const { code, language } = req.body;
-    const analysis = await analysisService.submitCode(req.user.id, code, language);
+    const analysis = await analysisService.submitCode(
+      req.user.id,
+      code,
+      language
+    );
     res.status(httpStatus.CREATED).json({
       success: true,
       data: {
@@ -19,7 +23,10 @@ const submitCode = async (req, res, next) => {
 
 const getAnalysis = async (req, res, next) => {
   try {
-    const analysis = await analysisService.getAnalysisById(req.params.analysisId, req.user.id);
+    const analysis = await analysisService.getAnalysisById(
+      req.params.analysisId,
+      req.user.id
+    );
     res.json({
       success: true,
       data: {
@@ -33,7 +40,10 @@ const getAnalysis = async (req, res, next) => {
 
 const getUserAnalyses = async (req, res, next) => {
   try {
-    const result = await analysisService.getUserAnalyses(req.user.id, req.query);
+    const result = await analysisService.getUserAnalyses(
+      req.user.id,
+      req.query
+    );
     res.json({
       success: true,
       data: {

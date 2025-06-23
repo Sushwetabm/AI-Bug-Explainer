@@ -1,32 +1,45 @@
-const httpStatus = require("http-status");
+const httpStatus = require("http-status").default;
 const jwt = require("jsonwebtoken");
 const config = require("../config");
 const ApiError = require("../utils/ApiError");
 const User = require("../models/User");
+const bcrypt = require("bcryptjs");
 
 const register = async (userBody) => {
-  if (await User.isEmailTaken(userBody.email)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Email already taken");
+  const { email, password } = userBody;
+  const normalizedEmail = email.trim().toLowerCase();
+
+  if (!normalizedEmail) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Email is required");
   }
-  return await User.create(userBody);
+  if (!password) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Password is required");
+  }
+
+  const existingUser = await User.findOne({ email: normalizedEmail });
+  if (existingUser) {
+    throw new ApiError(httpStatus.CONFLICT, "Email is already registered");
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const user = await User.create({
+    email: normalizedEmail,
+    password: hashedPassword,
+  });
+
+  return user;
 };
 
-// const login = async (email, password) => {
-//   const user = await User.findOne({ email });
-//   if (!user || !(await user.isPasswordMatch(password))) {
-//     throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
-//   }
-//   return user;
-// };
-
 const login = async (email, password) => {
-  const user = await User.findOne({ email });
+  const normalizedEmail = email.trim().toLowerCase();
+  const user = await User.findOne({ email: normalizedEmail });
+
   if (!user) {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
   }
 
-  const passwordMatch = await user.isPasswordMatch(password);
-  if (!passwordMatch) {
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
   }
 
