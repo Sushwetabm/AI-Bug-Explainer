@@ -9,25 +9,46 @@ const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/email");
 
 const register = async (userBody) => {
-  if (await User.isEmailTaken(userBody.email)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Email already taken");
+  const { email, password } = userBody;
+  const normalizedEmail = email.trim().toLowerCase();
+
+  if (!normalizedEmail) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Email is required");
   }
-  return await User.create(userBody);
+  if (!password) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Password is required");
+  }
+
+  const existingUser = await User.findOne({ email: normalizedEmail });
+  if (existingUser) {
+    throw new ApiError(httpStatus.CONFLICT, "Email is already registered");
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const user = await User.create({
+    email: normalizedEmail,
+    password: hashedPassword,
+  });
+
+  return user;
 };
 
 const login = async (email, password) => {
-  const user = await User.findOne({ email });
+  const normalizedEmail = email.trim().toLowerCase();
+  const user = await User.findOne({ email: normalizedEmail });
+
   if (!user) {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
   }
 
-  const passwordMatch = await user.isPasswordMatch(password);
-  if (!passwordMatch) {
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
   }
 
   return user;
 };
+
 // Forgot Password
 const forgotPassword = async (email) => {
   const normalizedEmail = email.trim().toLowerCase();
@@ -38,10 +59,7 @@ const forgotPassword = async (email) => {
   }
 
   const resetToken = crypto.randomBytes(32).toString("hex");
-  const hashedToken = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex");
+  const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
 
   await Token.findOneAndDelete({ user: user._id });
 
@@ -65,6 +83,8 @@ const forgotPassword = async (email) => {
 
   return resetLink;
 };
+
+// Reset Password
 const resetPassword = async (token, newPassword) => {
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
@@ -81,7 +101,7 @@ const resetPassword = async (token, newPassword) => {
   user.password = await bcrypt.hash(newPassword, 10);
   await user.save();
 
-  await Token.deleteOne({ _id: resetTokenDoc._id }); // Remove used token
+  await Token.deleteOne({ _id: resetTokenDoc._id });
 };
 
 const generateAuthTokens = (user) => {
