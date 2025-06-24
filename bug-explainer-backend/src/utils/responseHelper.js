@@ -1,4 +1,4 @@
-const httpStatus = require("http-status");
+const httpStatus = require("http-status").default;
 
 const successResponse = (res, data, statusCode = httpStatus.OK) => {
   res.status(statusCode).json({
