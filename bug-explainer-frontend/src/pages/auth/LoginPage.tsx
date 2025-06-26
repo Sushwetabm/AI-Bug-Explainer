@@ -11,7 +11,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { LoginFormData, loginSchema } from "@/lib/validations/auth";
+import type { LoginFormData } from "@/lib/validations/auth";
+import { loginSchema } from "@/lib/validations/auth";
 import { useAuth } from "@/hooks/useAuth";
 
 export function LoginPage() {
