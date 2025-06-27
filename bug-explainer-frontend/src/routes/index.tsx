@@ -8,44 +8,56 @@ import { ResetPasswordPage } from "@/pages/auth/ResetPasswordPage";
 import { ChatPage } from "@/pages/ChatPage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
+import { LandingPage } from "@/pages/LandingPage"; // Import the new landing page
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Navigate } from "react-router-dom";
+
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <AppLayout />,
+    element: <LandingPage />, // New landing page as the root
+  },
+  {
+    path: "/auth",
+    element: <AuthLayout />,
     children: [
       {
-        index: true, // This handles the root path
-        element: <Navigate to="/chat" replace />,
+        path: "login",
+        element: <LoginPage />,
       },
       {
-        path: "/chat",
-        element: <ChatPage />,
+        path: "register",
+        element: <RegisterPage />,
       },
       {
-        path: "/dashboard",
-        element: <DashboardPage />,
+        path: "forgot-password",
+        element: <ForgotPasswordPage />,
+      },
+      {
+        path: "reset-password/:token",
+        element: <ResetPasswordPage />,
       },
     ],
   },
   {
-    element: <AuthLayout />,
+    path: "/app",
+    element: (
+      <ProtectedRoute>
+        <AppLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
-        path: "/login",
-        element: <LoginPage />,
+        index: true,
+        element: <Navigate to="/app/chat" replace />,
       },
       {
-        path: "/register",
-        element: <RegisterPage />,
+        path: "chat",
+        element: <ChatPage />,
       },
       {
-        path: "/forgot-password",
-        element: <ForgotPasswordPage />,
-      },
-      {
-        path: "/reset-password/:token",
-        element: <ResetPasswordPage />,
+        path: "dashboard",
+        element: <DashboardPage />,
       },
     ],
   },
