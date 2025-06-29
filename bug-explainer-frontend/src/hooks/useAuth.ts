@@ -37,7 +37,8 @@ export function useAuth() {
       localStorage.setItem("token", response.data.token);
       setUser(response.data.user);
       toast.success("Logged in successfully");
-      navigate("/chat");
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      navigate("/app/chat");
     } catch (error) {
       toast.error("Invalid credentials");
       throw error;

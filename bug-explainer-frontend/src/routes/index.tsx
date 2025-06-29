@@ -41,23 +41,24 @@ export const router = createBrowserRouter([
   },
   {
     path: "/app",
-    element: (
-      <ProtectedRoute>
-        <AppLayout />
-      </ProtectedRoute>
-    ),
+    element: <ProtectedRoute />, // Remove children here
     children: [
       {
-        index: true,
-        element: <Navigate to="/app/chat" replace />,
-      },
-      {
-        path: "chat",
-        element: <ChatPage />,
-      },
-      {
-        path: "dashboard",
-        element: <DashboardPage />,
+        element: <AppLayout />, // Move AppLayout here
+        children: [
+          {
+            index: true,
+            element: <Navigate to="/app/chat" replace />,
+          },
+          {
+            path: "chat",
+            element: <ChatPage />,
+          },
+          {
+            path: "dashboard",
+            element: <DashboardPage />,
+          },
+        ],
       },
     ],
   },

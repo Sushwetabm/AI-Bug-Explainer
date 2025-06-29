@@ -4,6 +4,11 @@ const toJSON = require("./plugins/toJSON");
 
 const userSchema = mongoose.Schema(
   {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     email: {
       type: String,
       required: true,
@@ -16,7 +21,7 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
       minlength: 8,
-      private: true, // used by the toJSON plugin
+      private: true,
     },
   },
   {
@@ -47,14 +52,6 @@ userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
 userSchema.methods.isPasswordMatch = async function (password) {
   return bcrypt.compare(password, this.password);
 };
-
-// 🔥 REMOVE this block to avoid double hashing
-// userSchema.pre("save", async function (next) {
-//   if (this.isModified("password")) {
-//     this.password = await bcrypt.hash(this.password, 12);
-//   }
-//   next();
-// });
 
 /**
  * @typedef User

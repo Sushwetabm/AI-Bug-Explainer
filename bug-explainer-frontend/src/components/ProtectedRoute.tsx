@@ -1,8 +1,13 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
+import { ReactNode } from "react";
 
-export function ProtectedRoute() {
+interface ProtectedRouteProps {
+  children?: ReactNode;
+}
+
+export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, isLoading } = useAuth();
   const location = useLocation();
 
@@ -15,9 +20,8 @@ export function ProtectedRoute() {
   }
 
   if (!user) {
-    // Redirect to landing page with return location stored in state
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
-  return <Outlet />;
+  return children ? children : <Outlet />;
 }

@@ -15,7 +15,15 @@ const passwordMessages = {
   "string.min": "Password must be at least {#limit} characters long",
 };
 
+const nameMessages = {
+  "string.base": "Name must be a string",
+  "string.empty": "Name cannot be empty",
+  "any.required": "Name is required",
+  "string.min": "Name must be at least {#limit} characters long",
+};
+
 const strongPassword = Joi.string()
+  .min(8)
   .pattern(
     new RegExp(
       "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=[\\]{};':\"\\\\|,.<>/?]).{8,}$"
@@ -30,15 +38,23 @@ const strongPassword = Joi.string()
 
 const register = {
   body: Joi.object().keys({
+    name: Joi.string().min(2).required().messages(nameMessages),
     email: Joi.string().email().required().messages(emailMessages),
     password: strongPassword,
+    confirmPassword: Joi.string()
+      .valid(Joi.ref("password"))
+      .required()
+      .messages({
+        "any.only": "Passwords must match",
+        "any.required": "Confirm Password is required",
+      }),
   }),
 };
 
 const login = {
   body: Joi.object().keys({
     email: Joi.string().email().required().messages(emailMessages),
-    password: strongPassword,
+    password: Joi.string().required().messages(passwordMessages),
   }),
 };
 

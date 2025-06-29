@@ -9,9 +9,12 @@ const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/email");
 
 const register = async (userBody) => {
-  const { email, password } = userBody;
+  const { name, email, password } = userBody;
   const normalizedEmail = email.trim().toLowerCase();
 
+  if (!name) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Name is required");
+  }
   if (!normalizedEmail) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Email is required");
   }
@@ -26,6 +29,7 @@ const register = async (userBody) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await User.create({
+    name,
     email: normalizedEmail,
     password: hashedPassword,
   });
@@ -59,7 +63,10 @@ const forgotPassword = async (email) => {
   }
 
   const resetToken = crypto.randomBytes(32).toString("hex");
-  const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
 
   await Token.findOneAndDelete({ user: user._id });
 
@@ -73,7 +80,7 @@ const forgotPassword = async (email) => {
 
   const htmlMessage = `
     <h2>Password Reset Request</h2>
-    <p>Hello ${user.name || "User"},</p>
+    <p>Hello ${user.name},</p>
     <p>You requested to reset your password.</p>
     <p><a href="${resetLink}" target="_blank">Click here to reset your password</a></p>
     <p>This link is valid for 15 minutes.</p>

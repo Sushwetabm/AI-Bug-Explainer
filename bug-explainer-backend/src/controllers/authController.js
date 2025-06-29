@@ -12,6 +12,7 @@ const register = async (req, res, next) => {
       data: {
         user: {
           id: user.id,
+          name: user.name,
           email: user.email,
           created_at: user.createdAt,
         },
@@ -55,6 +56,7 @@ const getProfile = async (req, res, next) => {
       data: {
         user: {
           id: user.id,
+          name: user.name,
           email: user.email,
           created_at: user.createdAt,
         },
