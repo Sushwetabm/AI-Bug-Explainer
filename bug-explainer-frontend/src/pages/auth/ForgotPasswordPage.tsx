@@ -34,7 +34,41 @@ export function ForgotPasswordPage() {
 
   return (
     <div className="w-full max-w-md space-y-8">
-      {/* Similar structure to LoginPage */}
+      <div className="text-center">
+        <h1 className="text-3xl font-bold">Forgot Password</h1>
+        <p className="mt-2 text-muted-foreground">
+          Enter your email to receive a reset link
+        </p>
+      </div>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input placeholder="you@example.com" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button type="submit" className="w-full">
+            Send Reset Link
+          </Button>
+        </form>
+      </Form>
+
+      <p className="text-center text-sm text-muted-foreground">
+        Remember your password?{" "}
+        <Link to="/login" className="font-medium text-primary hover:underline">
+          Sign in
+        </Link>
+      </p>
     </div>
   );
 }

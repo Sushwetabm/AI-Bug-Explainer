@@ -22,7 +22,7 @@ export function LandingPage() {
         {showLogin ? (
           <>
             <Button asChild>
-              <Link to="/auth/login">Sign In</Link>
+              <Link to="/auth/login">Log In</Link>
             </Button>
             <Button variant="link" onClick={() => setShowLogin(false)}>
               Need to register instead?

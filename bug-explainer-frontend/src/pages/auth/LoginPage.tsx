@@ -74,7 +74,7 @@ export function LoginPage() {
 
           <div className="flex items-center justify-end">
             <Link
-              to="/forgot-password"
+              to="/auth/forgot-password"
               className="text-sm font-medium text-primary hover:underline"
             >
               Forgot password?
@@ -90,7 +90,7 @@ export function LoginPage() {
       <p className="text-center text-sm text-muted-foreground">
         Don't have an account?{" "}
         <Link
-          to="/register"
+          to="/auth/register"
           className="font-medium text-primary hover:underline"
         >
           Sign up

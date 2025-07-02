@@ -76,7 +76,7 @@ const forgotPassword = async (email) => {
     expiresAt: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
   });
 
-  const resetLink = `http://localhost:3000/reset-password?token=${resetToken}`;
+  const resetLink = `http://localhost:5000/auth/reset-password?token=${resetToken}`;
 
   const htmlMessage = `
     <h2>Password Reset Request</h2>
