@@ -27,6 +27,7 @@ const codeAnalysisSchema = mongoose.Schema(
         "rust",
       ],
     },
+    result: { type: String },
     status: {
       type: String,
       enum: ["pending", "processing", "completed", "failed"],
