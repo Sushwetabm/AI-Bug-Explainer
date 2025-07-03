@@ -31,16 +31,43 @@ export function useAuth() {
     checkAuth();
   }, [navigate]);
 
+  // const login = async (email: string, password: string) => {
+  //   try {
+  //     const response = await authService.login({ email, password });
+  //     localStorage.setItem("token", response.data.token);
+  //     setUser(response.data.user);
+  //     toast.success("Logged in successfully");
+  //     await new Promise((resolve) => setTimeout(resolve, 100));
+  //     navigate("/app/chat");
+  //   } catch (error) {
+  //     toast.error("Invalid credentials");
+  //     throw error;
+  //   }
+  // };
   const login = async (email: string, password: string) => {
     try {
       const response = await authService.login({ email, password });
-      localStorage.setItem("token", response.data.token);
-      setUser(response.data.user);
+
+      const token = response.data.data?.token;
+      const user = response.data.data?.user;
+
+      if (response.status !== 200 || !token || !user) {
+        toast.error("Invalid credentials");
+        throw new Error("Login failed");
+      }
+
+      localStorage.setItem("token", token);
+      setUser(user);
       toast.success("Logged in successfully");
+
       await new Promise((resolve) => setTimeout(resolve, 100));
       navigate("/app/chat");
     } catch (error) {
-      toast.error("Invalid credentials");
+      if (error instanceof Error && error.message.includes("Login failed")) {
+        // already handled
+      } else {
+        toast.error("An unexpected error occurred");
+      }
       throw error;
     }
   };
