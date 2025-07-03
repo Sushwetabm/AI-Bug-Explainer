@@ -2,7 +2,7 @@ const httpStatus = require("http-status").default;
 const ApiError = require("../utils/ApiError");
 const User = require("../models/User");
 
-const getUserProfile = async (req, res, next) => {
+const getCurrentUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);
     if (!user) {
@@ -14,6 +14,7 @@ const getUserProfile = async (req, res, next) => {
         user: {
           id: user.id,
           email: user.email,
+          name: user.name,
           created_at: user.created_at,
         },
       },
@@ -24,5 +25,5 @@ const getUserProfile = async (req, res, next) => {
 };
 
 module.exports = {
-  getUserProfile,
+  getCurrentUser,
 };

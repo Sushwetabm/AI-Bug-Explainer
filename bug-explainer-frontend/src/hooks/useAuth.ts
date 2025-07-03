@@ -18,7 +18,8 @@ export function useAuth() {
 
       try {
         const response = await authService.getCurrentUser();
-        setUser(response.data);
+        setUser(response.data.data.user);
+        
       } catch (error) {
         localStorage.removeItem("token");
         toast.error("Session expired. Please log in again.");
