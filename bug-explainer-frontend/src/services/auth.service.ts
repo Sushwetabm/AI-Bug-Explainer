@@ -53,4 +53,10 @@ export const authService = {
       validateStatus: (status) => status < 500,
     });
   },
+  async validateToken() {
+    return axios.get(`${API_BASE_URL}/auth/validate`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      validateStatus: (status) => status < 500,
+    });
+  },
 };

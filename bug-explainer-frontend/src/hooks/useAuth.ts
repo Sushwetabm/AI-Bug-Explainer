@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { authService } from "@/services";
+import { authService } from "@/services/auth.service";
 import { toast } from "sonner";
 
 export function useAuth() {
@@ -22,7 +22,7 @@ export function useAuth() {
       } catch (error) {
         localStorage.removeItem("token");
         toast.error("Session expired. Please log in again.");
-        navigate("/login");
+        navigate("/auth/login");
       } finally {
         setIsLoading(false);
       }
@@ -49,7 +49,7 @@ export function useAuth() {
     localStorage.removeItem("token");
     setUser(null);
     toast.success("Logged out successfully");
-    navigate("/login");
+    navigate("/auth/login");
   };
 
   return { user, isLoading, login, logout };
