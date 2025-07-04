@@ -2,35 +2,46 @@ import { useAuth } from "@/hooks/useAuth";
 import { analysisService } from "@/services/analysis.service";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface AnalysisItem {
   id: string;
-  // Add other properties you expect from the API
   createdAt?: string;
   code?: string;
-  // ... include any other fields your API returns
 }
 
 export function DashboardPage() {
   const { user } = useAuth();
   const [history, setHistory] = useState<AnalysisItem[]>([]);
+  const navigate = useNavigate(); // ✅ useNavigate for back
 
   useEffect(() => {
     const loadHistory = async () => {
       try {
         const response = await analysisService.getAnalysisHistory();
-        // Ensure data is always an array
         setHistory(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error("Failed to load analysis history:", error);
-        setHistory([]); // Reset to empty array on error
+        setHistory([]);
       }
     };
     loadHistory();
   }, []);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 px-4 py-6 max-w-4xl mx-auto">
+      {/* ✅ Back Button */}
+      <Button
+        variant="ghost"
+        className="flex items-center gap-2"
+        onClick={() => navigate(-1)}
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back
+      </Button>
+
       <Card>
         <CardHeader>
           <CardTitle>User Profile</CardTitle>
@@ -58,7 +69,6 @@ export function DashboardPage() {
                       {new Date(item.createdAt).toLocaleString()}
                     </p>
                   )}
-                  {/* Add more item details here as needed */}
                 </div>
               ))}
             </div>

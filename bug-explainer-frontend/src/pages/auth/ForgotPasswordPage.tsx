@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // 👈 Add useNavigate
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -23,10 +23,17 @@ export function ForgotPasswordPage() {
     },
   });
 
+  const navigate = useNavigate(); // 👈 useNavigate hook
+
   const onSubmit = async (data) => {
     try {
       await authService.forgotPassword(data.email);
       toast.success("Password reset email sent");
+
+      // ✅ Redirect after short delay (optional)
+      setTimeout(() => {
+        navigate("/auth/login");
+      }, 1500); // you can adjust delay
     } catch (error) {
       toast.error("Error sending reset email");
     }
@@ -65,7 +72,10 @@ export function ForgotPasswordPage() {
 
       <p className="text-center text-sm text-muted-foreground">
         Remember your password?{" "}
-        <Link to="/login" className="font-medium text-primary hover:underline">
+        <Link
+          to="/auth/login"
+          className="font-medium text-primary hover:underline"
+        >
           Sign in
         </Link>
       </p>

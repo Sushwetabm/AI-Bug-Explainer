@@ -11,6 +11,8 @@ import { NotFoundPage } from "@/pages/NotFoundPage";
 import { LandingPage } from "@/pages/LandingPage"; // Import the new landing page
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Navigate } from "react-router-dom";
+import { FaqsPage } from "@/pages/FaqsPage";
+import { EditProfilePage } from "@/pages/dashboard/EditProfilePage";
 
 export const router = createBrowserRouter([
   {
@@ -57,6 +59,14 @@ export const router = createBrowserRouter([
           {
             path: "dashboard",
             element: <DashboardPage />,
+          },
+          {
+            path: "profile",
+            element: <EditProfilePage />,
+          },
+          {
+            path: "faqs",
+            element: <FaqsPage />,
           },
         ],
       },

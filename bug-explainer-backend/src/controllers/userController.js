@@ -1,6 +1,7 @@
 const httpStatus = require("http-status").default;
 const ApiError = require("../utils/ApiError");
 const User = require("../models/User");
+const bcrypt = require("bcryptjs");
 
 const getCurrentUser = async (req, res, next) => {
   try {
@@ -23,7 +24,59 @@ const getCurrentUser = async (req, res, next) => {
     next(error);
   }
 };
+const updateProfile = async (req, res, next) => {
+  try {
+    const { name, email, password } = req.body;
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+    }
+
+    // ✅ Require current password to proceed
+    const inputPassword = password?.trim();
+    if (!inputPassword) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        "Password is required to update profile"
+      );
+    }
+
+    const isMatch = await user.isPasswordMatch(inputPassword);
+    if (!isMatch) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect password");
+    }
+
+    // ✅ Now proceed to update name and email
+    if (email && email !== user.email) {
+      const emailTaken = await User.isEmailTaken(email, req.user.id);
+      if (emailTaken) {
+        throw new ApiError(httpStatus.BAD_REQUEST, "Email already in use");
+      }
+      user.email = email;
+    }
+
+    if (name) user.name = name;
+
+    await user.save();
+
+    res.status(httpStatus.OK).json({
+      success: true,
+      data: {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          created_at: user.createdAt,
+        },
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getCurrentUser,
+  updateProfile,
 };

@@ -11,9 +11,5 @@ router.use("/auth", authRoutes);
 // router.use("/user", [auth(), userRoutes]);
 router.use("/user", auth(), userRoutes);
 router.use("/analysis", auth(), analysisRoutes);
-// Optional lightweight token‑check endpoint
-router.get("/auth/validate", auth(), (req, res) => {
-  res.status(200).json({ ok: true });
-});
 
 module.exports = router;
