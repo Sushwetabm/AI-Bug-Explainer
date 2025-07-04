@@ -14,7 +14,9 @@ import {
 import { forgotPasswordSchema } from "@/lib/validations/auth";
 import { authService } from "@/services";
 import { toast } from "sonner";
+import { z } from "zod";
 
+type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export function ForgotPasswordPage() {
   const form = useForm({
     resolver: zodResolver(forgotPasswordSchema),
@@ -23,17 +25,16 @@ export function ForgotPasswordPage() {
     },
   });
 
-  const navigate = useNavigate(); // 👈 useNavigate hook
+  const navigate = useNavigate();
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
       await authService.forgotPassword(data.email);
       toast.success("Password reset email sent");
 
-      // ✅ Redirect after short delay (optional)
       setTimeout(() => {
         navigate("/auth/login");
-      }, 1500); // you can adjust delay
+      }, 1500);
     } catch (error) {
       toast.error("Error sending reset email");
     }

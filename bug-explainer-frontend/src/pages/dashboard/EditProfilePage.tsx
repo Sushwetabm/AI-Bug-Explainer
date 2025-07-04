@@ -16,7 +16,7 @@ import { useEffect, useState } from "react";
 import { userService } from "@/services/user.service";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -29,6 +29,11 @@ import {
 const schema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
+  newPassword: z
+    .string()
+    .min(8, "New password must be at least 8 characters")
+    .optional()
+    .or(z.literal("")),
 });
 
 export function EditProfilePage() {
@@ -40,11 +45,14 @@ export function EditProfilePage() {
     defaultValues: {
       name: "",
       email: "",
+      newPassword: "",
     },
   });
 
   const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
+  const [showCurrentPwd, setShowCurrentPwd] = useState(false);
+  const [showNewPwd, setShowNewPwd] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -54,20 +62,21 @@ export function EditProfilePage() {
   }, [user]);
 
   const handleConfirmPassword = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault(); // prevent unintended form submission
+    if (e) e.preventDefault();
     try {
       const data = form.getValues();
       const payload = {
-        ...data,
+        name: data.name,
+        email: data.email,
         password: currentPassword,
+        newPassword: data.newPassword?.trim() || undefined,
       };
-      console.log("Submitting password for confirmation");
 
-      const res = await userService.updateProfile(payload);
-
+      await userService.updateProfile(payload);
       toast.success("Profile updated successfully!");
+
       setShowPasswordPrompt(false);
-      await login(data.email, currentPassword);
+      await login(data.email, payload.newPassword || currentPassword);
     } catch (err) {
       toast.error("Incorrect password. Redirecting...");
       navigate("/app/chat");
@@ -75,7 +84,7 @@ export function EditProfilePage() {
   };
 
   const onSubmit = () => {
-    setShowPasswordPrompt(true); // Show password modal first
+    setShowPasswordPrompt(true);
   };
 
   return (
@@ -118,13 +127,38 @@ export function EditProfilePage() {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="newPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>New Password (optional)</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      type={showNewPwd ? "text" : "password"}
+                      placeholder="••••••••"
+                      {...field}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-muted-foreground"
+                      onClick={() => setShowNewPwd((prev) => !prev)}
+                    >
+                      {showNewPwd ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <Button type="submit" className="w-full">
             Save Changes
           </Button>
         </form>
       </Form>
 
-      {/* 🔒 Password Prompt Dialog */}
       <Dialog open={showPasswordPrompt} onOpenChange={setShowPasswordPrompt}>
         <DialogContent aria-describedby="dialog-desc">
           <form onSubmit={handleConfirmPassword}>
@@ -139,13 +173,22 @@ export function EditProfilePage() {
               <label className="text-sm font-medium">
                 Your Current Password
               </label>
-              <Input
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-              />
+              <div className="relative">
+                <Input
+                  type={showCurrentPwd ? "text" : "password"}
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+                <button
+                  type="button"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-muted-foreground"
+                  onClick={() => setShowCurrentPwd((prev) => !prev)}
+                >
+                  {showCurrentPwd ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
 
             <DialogFooter className="pt-4">

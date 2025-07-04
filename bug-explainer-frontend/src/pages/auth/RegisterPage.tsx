@@ -16,12 +16,17 @@ import { registerSchema } from "@/lib/validations/auth";
 import { useAuth } from "@/hooks/useAuth";
 import { authService } from "@/services/auth.service";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 export function RegisterPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -34,7 +39,6 @@ export function RegisterPage() {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      // Prepare payload matching backend expectations
       const payload = {
         name: data.name,
         email: data.email,
@@ -44,7 +48,6 @@ export function RegisterPage() {
 
       await authService.register(payload);
 
-      // Login user after successful registration
       const loginResponse = await login(data.email, data.password);
 
       if (loginResponse) {
@@ -55,8 +58,6 @@ export function RegisterPage() {
         navigate("/app/chat", { replace: true });
       }
     } catch (error: any) {
-      console.error("Registration error:", error);
-
       toast({
         title: "Registration Failed",
         description:
@@ -65,7 +66,6 @@ export function RegisterPage() {
         variant: "destructive",
       });
 
-      // Set form errors if available
       if (error.response?.data?.errors) {
         error.response.data.errors.forEach((err: any) => {
           form.setError(err.field, { message: err.message });
@@ -129,12 +129,22 @@ export function RegisterPage() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="••••••••"
-                    {...field}
-                    autoComplete="new-password"
-                  />
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      {...field}
+                      autoComplete="new-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground"
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -148,12 +158,26 @@ export function RegisterPage() {
               <FormItem>
                 <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
-                  <Input
-                    type="password"
-                    placeholder="••••••••"
-                    {...field}
-                    autoComplete="new-password"
-                  />
+                  <div className="relative">
+                    <Input
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      {...field}
+                      autoComplete="new-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword((prev) => !prev)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground"
+                      tabIndex={-1}
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff size={18} />
+                      ) : (
+                        <Eye size={18} />
+                      )}
+                    </button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -1,7 +1,6 @@
 const httpStatus = require("http-status").default;
 const ApiError = require("../utils/ApiError");
 const User = require("../models/User");
-const bcrypt = require("bcryptjs");
 
 const getCurrentUser = async (req, res, next) => {
   try {
@@ -24,30 +23,31 @@ const getCurrentUser = async (req, res, next) => {
     next(error);
   }
 };
+
 const updateProfile = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, newPassword } = req.body;
 
     const user = await User.findById(req.user.id);
     if (!user) {
       throw new ApiError(httpStatus.NOT_FOUND, "User not found");
     }
 
-    // ✅ Require current password to proceed
+    // Require current password
     const inputPassword = password?.trim();
     if (!inputPassword) {
       throw new ApiError(
         httpStatus.BAD_REQUEST,
-        "Password is required to update profile"
+        "Current password is required to update profile"
       );
     }
 
     const isMatch = await user.isPasswordMatch(inputPassword);
     if (!isMatch) {
-      throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect password");
+      throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect current password");
     }
 
-    // ✅ Now proceed to update name and email
+    // Update email
     if (email && email !== user.email) {
       const emailTaken = await User.isEmailTaken(email, req.user.id);
       if (emailTaken) {
@@ -56,7 +56,13 @@ const updateProfile = async (req, res, next) => {
       user.email = email;
     }
 
+    // Update name
     if (name) user.name = name;
+
+    // Update password
+    if (newPassword && newPassword.trim().length >= 8) {
+      user.password = newPassword.trim();
+    }
 
     await user.save();
 
