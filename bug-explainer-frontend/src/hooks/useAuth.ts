@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "@/services/auth.service";
 import { toast } from "sonner";
-
+import type { User } from "@/lib/types";
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,7 +19,6 @@ export function useAuth() {
       try {
         const response = await authService.getCurrentUser();
         setUser(response.data.data.user);
-        
       } catch (error) {
         localStorage.removeItem("token");
         toast.error("Session expired. Please log in again.");
@@ -45,7 +44,7 @@ export function useAuth() {
   //     throw error;
   //   }
   // };
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<boolean> => {
     try {
       const response = await authService.login({ email, password });
 
@@ -63,6 +62,8 @@ export function useAuth() {
 
       await new Promise((resolve) => setTimeout(resolve, 100));
       navigate("/app/chat");
+
+      return true; // ✅ <-- THIS is important
     } catch (error) {
       if (error instanceof Error && error.message.includes("Login failed")) {
         // already handled

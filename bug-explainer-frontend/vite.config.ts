@@ -16,13 +16,15 @@ export default defineConfig({
       "@layouts": path.resolve(__dirname, "./src/layouts"),
     },
   },
-
   build: {
     target: "es2022",
     chunkSizeWarningLimit: 1600,
   },
   server: {
-    port: 5000,
+    port: 5000, // still used locally
     open: true,
+  },
+  preview: {
+    port: 8080, // used by Railway in production
   },
 });

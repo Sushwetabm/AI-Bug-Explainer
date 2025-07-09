@@ -28,6 +28,7 @@ const schema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
+type FormData = z.infer<typeof schema>;
 
 export function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
@@ -37,7 +38,7 @@ export function ResetPasswordPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const form = useForm({
+  const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       password: "",
@@ -45,9 +46,18 @@ export function ResetPasswordPage() {
     },
   });
 
-  const onSubmit = async ({ password }) => {
+  const onSubmit = async ({ password, confirmPassword }: FormData) => {
     try {
-      await authService.resetPassword(token, password);
+      if (!token) {
+        toast.error("Invalid or expired token");
+        return;
+      }
+
+      await authService.resetPassword(token, {
+        password,
+        confirmPassword,
+      });
+
       toast.success("Password reset successful");
       navigate("/auth/login");
     } catch (err) {
