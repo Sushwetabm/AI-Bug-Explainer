@@ -18,13 +18,25 @@ const app = express();
 
 // Security middleware
 app.use(helmet());
+const allowedOrigins = [
+  "https://ai-bug-explainer-production.up.railway.app",
+  "http://localhost:5173", // for local dev
+];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: function (origin, callback) {
+      // allow requests with no origin like mobile apps or curl
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
   })
 );
+app.options("*", cors());
 
 // Request logging
 app.use(morgan("combined", { stream: logger.stream }));
