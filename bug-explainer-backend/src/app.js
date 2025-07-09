@@ -1,9 +1,8 @@
 const express = require("express");
-const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
-//const { errorHandler } = require("./middleware/errorHandler");
+
 const {
   errorHandler,
   errorConverter,
@@ -16,63 +15,63 @@ const { swaggerSetup } = require("./config/swagger");
 
 const app = express();
 
-// Security middleware
+// Security headers
 app.use(helmet());
+
+// ✅ Allow these frontend URLs to access the backend
 const allowedOrigins = [
   "https://ai-bug-explainer-production.up.railway.app", // frontend on Railway
-  "https://ai-bug-explainer-production-d771.up.railway.app", // backend on Railway
-  "http://localhost:5000", // frontend locally
-  "http://localhost:3000", // backend locally (in case needed)
+  "http://localhost:5000", // frontend local dev
 ];
 
-// Temporary debugging version - use this only for testing
-app.use(
-  cors({
-    origin: true, // Allow all origins temporarily
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
-  })
-);
+// ✅ CORS handler middleware
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
 
-// This must come **after** the CORS config
-app.options("*", (req, res) => {
-  res.header("Access-Control-Allow-Origin", req.headers.origin);
-  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.sendStatus(200);
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+
+  // ✅ Respond to preflight OPTIONS requests
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
 });
 
-// Request logging
+// Logging
 app.use(morgan("combined", { stream: logger.stream }));
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: "Too many requests from this IP, please try again later",
 });
 app.use(limiter);
 
-// Body parsing middleware
+// Body parsing
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// Swagger documentation
+// Swagger docs
 swaggerSetup(app);
 
-// API routes
+// Main API routes
 app.use("/api", routes);
 
-// Health check endpoint
+// Health check route
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "healthy" });
 });
 
-// 404 handler
+// 404 and Error handling
 app.use(notFoundHandler);
-
 app.use(errorConverter);
 app.use(errorLogger);
 app.use(errorHandler);
