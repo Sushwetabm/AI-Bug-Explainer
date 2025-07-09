@@ -19,8 +19,10 @@ const app = express();
 // Security middleware
 app.use(helmet());
 const allowedOrigins = [
-  "https://ai-bug-explainer-production.up.railway.app",
-  "http://localhost:5173", // for local dev
+  "https://ai-bug-explainer-production.up.railway.app", // frontend on Railway
+  "https://ai-bug-explainer-production-d771.up.railway.app", // backend on Railway
+  "http://localhost:5000", // frontend locally
+  "http://localhost:3000", // backend locally (in case needed)
 ];
 
 app.use(
