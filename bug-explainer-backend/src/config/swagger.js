@@ -14,7 +14,10 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:3000/api",
+        url:
+          process.env.NODE_ENV === "production"
+            ? `${process.env.RAILWAY_PUBLIC_DOMAIN || "https://your-backend-url.railway.app"}/api`
+            : "http://localhost:3000/api",
       },
     ],
     components: {
@@ -31,24 +34,43 @@ const options = {
 };
 
 let swaggerSpec;
-try {
-  swaggerSpec = swaggerJsdoc(options);
-} catch (err) {
-  console.error("🔥 Swagger spec generation failed:");
-  console.error(err.message || err);
-  process.exit(1); // exit the app safely so Railway logs the message
-}
 
 const swaggerSetup = (app) => {
-  // Swagger page
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  try {
+    console.log(
+      "📘 Swagger loading from:",
+      path.join(__dirname, "../routes/*.js")
+    );
 
-  // Docs in JSON format
-  app.get("/api-docs.json", (req, res) => {
-    res.setHeader("Content-Type", "application/json");
-    res.send(swaggerSpec);
-  });
+    // Generate swagger spec
+    swaggerSpec = swaggerJsdoc(options);
+
+    // Swagger page
+    app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+    // Docs in JSON format
+    app.get("/api-docs.json", (req, res) => {
+      res.setHeader("Content-Type", "application/json");
+      res.send(swaggerSpec);
+    });
+
+    console.log("✅ Swagger documentation setup successful");
+  } catch (err) {
+    console.error("🔥 Swagger setup failed:");
+    console.error(err.message || err);
+
+    // Don't exit the process, just disable swagger
+    console.log("⚠️  Continuing without Swagger documentation");
+
+    // Provide a fallback route
+    app.get("/api-docs", (req, res) => {
+      res.status(503).json({
+        error: "Swagger documentation temporarily unavailable",
+        message:
+          "API is running normally, but documentation is disabled due to configuration issues",
+      });
+    });
+  }
 };
-console.log("📘 Swagger loading from:", path.join(__dirname, "../routes/*.js"));
 
 module.exports = { swaggerSetup, swaggerSpec };

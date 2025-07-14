@@ -7,6 +7,41 @@ const router = express.Router();
 
 /**
  * @swagger
+ * /analysis/submit:
+ *   post:
+ *     summary: Submit code for analysis
+ *     tags: [Analysis]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - code
+ *               - language
+ *             properties:
+ *               code:
+ *                 type: string
+ *               language:
+ *                 type: string
+ *                 enum: [javascript, python, java, cpp, c, php, typescript, go, rust]
+ *     responses:
+ *       201:
+ *         description: Code submitted for analysis
+ *       401:
+ *         description: Unauthorized
+ */
+router.post(
+  "/submit",
+  validate(analysisValidation.submitCode),
+  codeAnalysisController.submitCode
+);
+
+/**
+ * @swagger
  * /analysis/user/history:
  *   get:
  *     summary: Get user's analysis history
@@ -56,6 +91,7 @@ router.get("/user/history", codeAnalysisController.getUserAnalyses);
  *         required: true
  *         schema:
  *           type: string
+ *         description: The ID of the analysis to retrieve
  *     responses:
  *       200:
  *         description: Analysis results
@@ -63,12 +99,6 @@ router.get("/user/history", codeAnalysisController.getUserAnalyses);
  *         description: Unauthorized
  *       404:
  *         description: Analysis not found
- */
-router.get("/:analysisId", codeAnalysisController.getAnalysis);
-
-/**
- * @swagger
- * /analysis/{analysisId}:
  *   delete:
  *     summary: Delete an analysis
  *     tags: [Analysis]
@@ -80,6 +110,7 @@ router.get("/:analysisId", codeAnalysisController.getAnalysis);
  *         required: true
  *         schema:
  *           type: string
+ *         description: The ID of the analysis to delete
  *     responses:
  *       204:
  *         description: Analysis deleted
@@ -88,40 +119,7 @@ router.get("/:analysisId", codeAnalysisController.getAnalysis);
  *       404:
  *         description: Analysis not found
  */
+router.get("/:analysisId", codeAnalysisController.getAnalysis);
 router.delete("/:analysisId", codeAnalysisController.deleteAnalysis);
 
-/**
- * @swagger
- * /analysis/submit:
- *   post:
- *     summary: Submit code for analysis
- *     tags: [Analysis]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - code
- *               - language
- *             properties:
- *               code:
- *                 type: string
- *               language:
- *                 type: string
- *                 enum: [javascript, python, java, cpp, c, php, typescript, go, rust]
- *     responses:
- *       201:
- *         description: Code submitted for analysis
- *       401:
- *         description: Unauthorized
- */
-router.post(
-  "/submit",
-  validate(analysisValidation.submitCode),
-  codeAnalysisController.submitCode
-);
 module.exports = router;
