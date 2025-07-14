@@ -50,7 +50,6 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
 // Optional but helps for preflight requests
 app.options("*", cors());
 
