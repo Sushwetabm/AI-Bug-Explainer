@@ -92,7 +92,15 @@ const forgotPassword = async (email) => {
     <p>This link is valid for 15 minutes.</p>
   `;
 
-  await sendEmail(user.email, "Reset your password", htmlMessage);
+  try {
+    await sendEmail(user.email, "Reset your password", htmlMessage);
+  } catch (err) {
+    console.error("❌ Failed to send email:", err); // 👈 log this
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "Failed to send reset email"
+    );
+  }
 
   return resetLink;
 };
