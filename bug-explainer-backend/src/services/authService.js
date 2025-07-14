@@ -184,7 +184,6 @@ const register = async (userBody) => {
     password: password,
   });
 
-  console.log("✅ User registered:", user.email);
   return user;
 };
 
@@ -192,25 +191,16 @@ const login = async (email, password) => {
   const normalizedEmail = email.trim().toLowerCase();
   const user = await User.findOne({ email: normalizedEmail });
 
-  console.log("🔐 Login attempt for:", normalizedEmail);
-
   if (!user) {
-    console.log("❌ User not found");
     throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
   }
-
-  console.log("📄 User found. Stored hash:", user.password);
 
   const isMatch = await user.isPasswordMatch(password);
 
-  console.log("🔍 Password match result:", isMatch);
-
   if (!isMatch) {
-    console.log("❌ Incorrect password");
     throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
   }
 
-  console.log("✅ Login successful");
   return user;
 };
 
@@ -219,7 +209,6 @@ const forgotPassword = async (email) => {
   const user = await User.findOne({ email: normalizedEmail });
 
   if (!user) {
-    console.log("❌ Forgot password: user not found:", normalizedEmail);
     throw new ApiError(httpStatus.NOT_FOUND, "User not found");
   }
 
@@ -239,9 +228,6 @@ const forgotPassword = async (email) => {
 
   const resetLink = `${process.env.FRONTEND_URL}/auth/reset-password?token=${resetToken}`;
 
-  console.log("📧 Sending reset email to:", user.email);
-  console.log("🔗 Reset link:", resetLink);
-
   const htmlMessage = `
     <h2>Password Reset Request</h2>
     <p>Hello ${user.name},</p>
@@ -252,9 +238,7 @@ const forgotPassword = async (email) => {
 
   try {
     await sendEmail(user.email, "Reset your password", htmlMessage);
-    console.log("✅ Email sent successfully");
   } catch (err) {
-    console.error("❌ Failed to send email:", err);
     throw new ApiError(
       httpStatus.INTERNAL_SERVER_ERROR,
       "Failed to send reset email"
@@ -265,11 +249,7 @@ const forgotPassword = async (email) => {
 };
 
 const resetPassword = async (token, newPassword) => {
-  console.log("🔁 Reset password request with token:", token);
-
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
-
-  console.log("🔒 Hashed token:", hashedToken);
 
   const resetTokenDoc = await Token.findOne({
     token: hashedToken,
@@ -277,27 +257,19 @@ const resetPassword = async (token, newPassword) => {
   });
 
   if (!resetTokenDoc) {
-    console.log("❌ Token is invalid or expired");
     throw new ApiError(httpStatus.BAD_REQUEST, "Invalid or expired token");
   }
 
   const user = await User.findById(resetTokenDoc.user);
 
   if (!user) {
-    console.log("❌ No user associated with this token");
     throw new ApiError(httpStatus.NOT_FOUND, "User not found");
   }
-
-  console.log("🔓 Resetting password for:", user.email);
 
   user.password = newPassword;
   await user.save();
 
-  console.log("✅ Password updated. New hash:", user.password);
-
   await Token.deleteOne({ _id: resetTokenDoc._id });
-
-  console.log("🗑️ Reset token deleted");
 };
 
 const generateAuthTokens = (user) => {
