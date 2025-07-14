@@ -8,6 +8,7 @@
 // router.put("/update", auth(), userController.updateProfile);
 
 // module.exports = router;
+
 const express = require("express");
 const { userController } = require("../controllers");
 const auth = require("../middleware/auth");
@@ -18,7 +19,7 @@ const router = express.Router();
  * @swagger
  * /user/me:
  *   get:
- *     summary: Get current user info
+ *     summary: Get current user profile
  *     tags: [User]
  *     security:
  *       - bearerAuth: []
@@ -34,7 +35,7 @@ router.get("/me", auth(), userController.getCurrentUser);
  * @swagger
  * /user/update:
  *   put:
- *     summary: Update current user profile
+ *     summary: Update user profile
  *     tags: [User]
  *     security:
  *       - bearerAuth: []
@@ -47,13 +48,12 @@ router.get("/me", auth(), userController.getCurrentUser);
  *             properties:
  *               name:
  *                 type: string
- *               bio:
+ *               email:
  *                 type: string
- *               avatar:
- *                 type: string
+ *                 format: email
  *     responses:
  *       200:
- *         description: User updated successfully
+ *         description: Profile updated successfully
  *       400:
  *         description: Invalid input
  *       401:
