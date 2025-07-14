@@ -123,7 +123,7 @@ router.post("/forgot-password", authController.forgotPassword);
  *       400:
  *         description: Invalid token or password
  */
-router.post("/reset-password", authController.resetPassword);
+router.post("/reset-password/:token", authController.resetPassword);
 
 module.exports = router;
 
