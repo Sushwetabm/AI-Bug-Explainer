@@ -28,6 +28,7 @@ const logger = require("./src/utils/logger");
 const { connectDB } = require("./src/config/database");
 
 let server; // declare server in outer scope
+console.log("🔍 PORT from .env is:", process.env.PORT);
 
 connectDB().then(() => {
   server = app.listen(port, () => {
