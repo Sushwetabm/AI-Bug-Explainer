@@ -7,41 +7,6 @@ const router = express.Router();
 
 /**
  * @swagger
- * /analysis/submit:
- *   post:
- *     summary: Submit code for analysis
- *     tags: [Analysis]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - code
- *               - language
- *             properties:
- *               code:
- *                 type: string
- *               language:
- *                 type: string
- *                 enum: [javascript, python, java, cpp, c, php, typescript, go, rust]
- *     responses:
- *       201:
- *         description: Code submitted for analysis
- *       401:
- *         description: Unauthorized
- */
-router.post(
-  "/submit",
-  validate(analysisValidation.submitCode),
-  codeAnalysisController.submitCode
-);
-
-/**
- * @swagger
  * /analysis/user/history:
  *   get:
  *     summary: Get user's analysis history
@@ -125,4 +90,38 @@ router.get("/:analysisId", codeAnalysisController.getAnalysis);
  */
 router.delete("/:analysisId", codeAnalysisController.deleteAnalysis);
 
+/**
+ * @swagger
+ * /analysis/submit:
+ *   post:
+ *     summary: Submit code for analysis
+ *     tags: [Analysis]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - code
+ *               - language
+ *             properties:
+ *               code:
+ *                 type: string
+ *               language:
+ *                 type: string
+ *                 enum: [javascript, python, java, cpp, c, php, typescript, go, rust]
+ *     responses:
+ *       201:
+ *         description: Code submitted for analysis
+ *       401:
+ *         description: Unauthorized
+ */
+router.post(
+  "/submit",
+  validate(analysisValidation.submitCode),
+  codeAnalysisController.submitCode
+);
 module.exports = router;
