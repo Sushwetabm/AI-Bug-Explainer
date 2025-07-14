@@ -16,7 +16,7 @@ const options = {
       {
         url:
           process.env.NODE_ENV === "production"
-            ? `${process.env.RAILWAY_PUBLIC_DOMAIN || "https://your-backend-url.railway.app"}/api`
+            ? `${process.env.RAILWAY_PUBLIC_DOMAIN || "https://ai-bug-explainer-production-d771.up.railway.app"}/api`
             : "http://localhost:3000/api",
       },
     ],
