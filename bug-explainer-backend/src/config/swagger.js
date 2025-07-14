@@ -29,7 +29,14 @@ const options = {
   apis: ["./src/routes/*.js"],
 };
 
-const swaggerSpec = swaggerJsdoc(options);
+let swaggerSpec;
+try {
+  swaggerSpec = swaggerJsdoc(options);
+} catch (err) {
+  console.error("🔥 Swagger spec generation failed:");
+  console.error(err.message || err);
+  process.exit(1); // exit the app safely so Railway logs the message
+}
 
 const swaggerSetup = (app) => {
   // Swagger page
