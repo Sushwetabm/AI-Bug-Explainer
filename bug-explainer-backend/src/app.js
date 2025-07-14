@@ -60,7 +60,7 @@ app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // Swagger docs
-swaggerSetup(app);
+//swaggerSetup(app);
 
 // Main API routes
 app.use("/api", routes);
