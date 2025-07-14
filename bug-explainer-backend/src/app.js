@@ -20,7 +20,7 @@ app.use(helmet());
 
 // ✅ Allow these frontend URLs to access the backend
 const allowedOrigins = [
-  //"https://ai-bug-explainer-production.up.railway.app", // frontend on Railway
+  "https://ai-bug-explainer-production.up.railway.app", // frontend on Railway
   process.env.FRONTEND_URL,
   "http://localhost:5000", // frontend local dev
   "http://localhost:3000",
@@ -29,6 +29,7 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
+      console.log("Origin attempting request:", origin);
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
