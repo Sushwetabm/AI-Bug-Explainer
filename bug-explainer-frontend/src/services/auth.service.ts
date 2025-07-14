@@ -41,17 +41,16 @@ export const authService = {
 
   async resetPassword(token: string, data: ResetPasswordData) {
     return axios.post(
-      `${API_BASE_URL}/auth/reset-password`,
+      `${API_BASE_URL}/auth/reset-password/${token}`, // ✅ token goes in the URL
       {
-        token, // send token in the request body
-        ...data,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
       },
       {
         validateStatus: (status) => status < 500,
       }
     );
   },
-
   async getCurrentUser() {
     return axios.get(`${API_BASE_URL}/user/profile`, {
       headers: {
