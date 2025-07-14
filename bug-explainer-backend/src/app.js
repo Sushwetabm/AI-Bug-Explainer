@@ -26,22 +26,29 @@ const allowedOrigins = [
   "http://localhost:3000",
 ];
 
+// app.use(
+//   cors({
+//     origin: function (origin, callback) {
+//       console.log("Origin attempting request:", origin);
+//       if (!origin || allowedOrigins.includes(origin)) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error("Not allowed by CORS"));
+//       }
+//     },
+//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//     credentials: true,
+//   })
+// );
 app.use(
   cors({
-    origin: function (origin, callback) {
-      console.log("Origin attempting request:", origin);
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: "*", // Allow all origins
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true,
+    credentials: false, // Set to true only if using cookies or HTTP auth headers
   })
 );
 
-// Optional but helps for preflight requests
+// Optional but helps with preflight requests
 app.options("*", cors());
 
 // Logging
