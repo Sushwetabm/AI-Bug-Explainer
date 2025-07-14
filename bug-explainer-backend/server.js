@@ -1,25 +1,3 @@
-// const app = require("./src/app");
-// const { port } = require("./src/config");
-// const logger = require("./src/utils/logger");
-
-// // Start the server
-// const server = app.listen(port, () => {
-//   logger.info(`Server running on port ${port}`);
-// });
-
-// // Handle unhandled promise rejections
-// process.on("unhandledRejection", (err) => {
-//   logger.error(`Error: ${err.message}`);
-//   server.close(() => process.exit(1));
-// });
-
-// // Handle uncaught exceptions
-// process.on("uncaughtException", (err) => {
-//   logger.error(`Error: ${err.message}`);
-//   process.exit(1);
-// });
-
-// module.exports = server;
 require("dotenv").config();
 
 const app = require("./src/app");
@@ -28,8 +6,6 @@ const logger = require("./src/utils/logger");
 const { connectDB } = require("./src/config/database");
 
 let server; // declare server in outer scope
-console.log("🔍 PORT from .env is:", process.env.PORT);
-
 connectDB().then(() => {
   server = app.listen(port, () => {
     logger.info(`✅ Server running on port ${port}`);
