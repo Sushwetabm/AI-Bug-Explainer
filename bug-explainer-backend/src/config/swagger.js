@@ -26,7 +26,7 @@ const options = {
       },
     },
   },
-  apis: ["./src/routes/*.js"],
+  apis: [__dirname + "/../routes/*.js"],
 };
 
 let swaggerSpec;
