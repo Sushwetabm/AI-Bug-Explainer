@@ -42,30 +42,6 @@ router.post(
 
 /**
  * @swagger
- * /analysis/{analysisId}:
- *   get:
- *     summary: Get analysis results
- *     tags: [Analysis]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: analysisId
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Analysis results
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Analysis not found
- */
-router.get("/:analysisId", codeAnalysisController.getAnalysis);
-
-/**
- * @swagger
  * /analysis/user/history:
  *   get:
  *     summary: Get user's analysis history
@@ -100,6 +76,30 @@ router.get("/:analysisId", codeAnalysisController.getAnalysis);
  *         description: Unauthorized
  */
 router.get("/user/history", codeAnalysisController.getUserAnalyses);
+
+/**
+ * @swagger
+ * /analysis/{analysisId}:
+ *   get:
+ *     summary: Get analysis results
+ *     tags: [Analysis]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: analysisId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Analysis results
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Analysis not found
+ */
+router.get("/:analysisId", codeAnalysisController.getAnalysis);
 
 /**
  * @swagger
