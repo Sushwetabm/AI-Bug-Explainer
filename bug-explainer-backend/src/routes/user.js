@@ -18,7 +18,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /user/me:
+ * /user/profile:
  *   get:
  *     summary: Get current user profile
  *     tags: [User]
@@ -30,7 +30,7 @@ const router = express.Router();
  *       401:
  *         description: Unauthorized
  */
-router.get("/me", auth(), userController.getCurrentUser);
+router.get("/profile", auth(), userController.getCurrentUser);
 
 /**
  * @swagger

@@ -5,5 +5,5 @@ export const API_ENDPOINTS = {
   RESET_PASSWORD: "/auth/reset-password",
   ANALYSIS: "/analysis",
   ANALYSIS_HISTORY: "/analysis/history",
-  USER_PROFILE: "/user/me",
+  USER_PROFILE: "/user/profile",
 };

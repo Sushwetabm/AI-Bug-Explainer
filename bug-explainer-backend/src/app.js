@@ -14,7 +14,7 @@ const routes = require("./routes");
 const { swaggerSetup } = require("./config/swagger");
 
 const app = express();
-
+app.set("trust proxy", 1);
 // Security headers
 app.use(helmet());
 
