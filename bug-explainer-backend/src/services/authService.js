@@ -119,7 +119,7 @@ const resetPassword = async (token, newPassword) => {
   }
 
   const user = await User.findById(resetTokenDoc.user);
-  user.password = await bcrypt.hash(newPassword, 10);
+  user.password = newPassword;
   await user.save();
 
   await Token.deleteOne({ _id: resetTokenDoc._id });
