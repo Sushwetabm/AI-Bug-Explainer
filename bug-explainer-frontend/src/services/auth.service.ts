@@ -46,7 +46,7 @@ export const authService = {
   },
 
   async getCurrentUser() {
-    return axios.get(`${API_BASE_URL}/user/me`, {
+    return axios.get(`${API_BASE_URL}/user/profile`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
