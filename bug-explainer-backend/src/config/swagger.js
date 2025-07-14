@@ -1,6 +1,7 @@
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const { version } = require("../../package.json");
+const path = require("path");
 
 const options = {
   definition: {
@@ -26,7 +27,7 @@ const options = {
       },
     },
   },
-  apis: [__dirname + "/../routes/*.js"],
+  apis: [path.join(__dirname, "../routes/*.js")],
 };
 
 let swaggerSpec;
@@ -48,5 +49,6 @@ const swaggerSetup = (app) => {
     res.send(swaggerSpec);
   });
 };
+console.log("📘 Swagger loading from:", path.join(__dirname, "../routes/*.js"));
 
-module.exports = { swaggerSetup };
+module.exports = { swaggerSetup, swaggerSpec };
