@@ -45,7 +45,9 @@ const login = async (email, password) => {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
   }
 
-  const isMatch = await bcrypt.compare(password, user.password);
+  // const isMatch = await bcrypt.compare(password, user.password);
+  const isMatch = await user.isPasswordMatch(password);
+
   if (!isMatch) {
     throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
   }
