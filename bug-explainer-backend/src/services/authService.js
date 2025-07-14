@@ -9,7 +9,7 @@ const bcrypt = require("bcrypt");
 const sendEmail = require("../utils/email");
 
 const register = async (userBody) => {
-  const { name, email, password } = userBody;
+  const { name, email, password, confirmPassword } = userBody;
   const normalizedEmail = email.trim().toLowerCase();
 
   if (!name) {
@@ -20,6 +20,9 @@ const register = async (userBody) => {
   }
   if (!password) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Password is required");
+  }
+  if (password !== confirmPassword) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Passwords do not match");
   }
 
   const existingUser = await User.findOne({ email: normalizedEmail });
