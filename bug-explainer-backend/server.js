@@ -31,7 +31,8 @@ let server; // declare server in outer scope
 
 connectDB().then(() => {
   server = app.listen(port, () => {
-    logger.info(`Server running on port ${port}`);
+    logger.info(`✅ Server running on port ${port}`);
+    console.log(`✅ Server running on port ${port}`);
   });
 
   process.on("unhandledRejection", (err) => {
