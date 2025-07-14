@@ -41,16 +41,6 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-// app.use(
-//   cors({
-//     origin:
-//       process.env.FRONTEND_URL ||
-//       "https://ai-bug-explainer-production.up.railway.app",
-//     credentials: true, // ⬅️ Needed if sending cookies or Authorization header
-//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-//     allowedHeaders: ["Content-Type", "Authorization"],
-//   })
-// );
 // Optional but helps for preflight requests
 app.options("*", cors());
 
