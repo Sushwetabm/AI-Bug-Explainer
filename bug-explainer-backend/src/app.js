@@ -42,13 +42,16 @@ const allowedOrigins = [
 // );
 app.use(
   cors({
-    origin: "*", // Allow all origins
+    origin:
+      process.env.FRONTEND_URL ||
+      "https://ai-bug-explainer-production.up.railway.app",
+    credentials: true, // ⬅️ Needed if sending cookies or Authorization header
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: false, // Set to true only if using cookies or HTTP auth headers
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-// Optional but helps with preflight requests
+// Optional but helps for preflight requests
 app.options("*", cors());
 
 // Logging
