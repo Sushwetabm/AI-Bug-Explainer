@@ -93,6 +93,9 @@ const forgotPassword = async (email) => {
   `;
 
   try {
+    console.log("EMAIL_FROM:", process.env.EMAIL_FROM);
+    console.log("EMAIL_APP_PASSWORD:", process.env.EMAIL_APP_PASSWORD);
+
     await sendEmail(user.email, "Reset your password", htmlMessage);
   } catch (err) {
     console.error("❌ Failed to send email:", err); // 👈 log this
