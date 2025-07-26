@@ -20,7 +20,10 @@ const auth =
 
     try {
       const payload = jwt.verify(token, config.jwt.secret); // Updated reference
-      req.user = payload;
+      // req.user = payload;
+      req.user = {
+        id: payload.id, // only store what you expect to use
+      };
       return next();
     } catch (err) {
       if (required) {

@@ -46,6 +46,8 @@ codeAnalysisSchema.plugin(toJSON);
 /**
  * @typedef CodeAnalysis
  */
-const CodeAnalysis = mongoose.model("CodeAnalysis", codeAnalysisSchema);
+const CodeAnalysis =
+  mongoose.models.CodeAnalysis ||
+  mongoose.model("CodeAnalysis", codeAnalysisSchema);
 
 module.exports = CodeAnalysis;

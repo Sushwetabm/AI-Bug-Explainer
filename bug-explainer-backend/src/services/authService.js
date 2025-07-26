@@ -273,7 +273,8 @@ const resetPassword = async (token, newPassword) => {
 };
 
 const generateAuthTokens = (user) => {
-  const accessToken = jwt.sign({ id: user.id }, config.jwt.secret, {
+  //const accessToken = jwt.sign({ id: user.id }, config.jwt.secret, {
+  const accessToken = jwt.sign({ id: user._id.toString() }, config.jwt.secret, {
     expiresIn: config.jwt.expiresIn,
   });
 

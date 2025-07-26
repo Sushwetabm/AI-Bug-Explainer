@@ -1,4 +1,196 @@
-import { useState } from "react";
+// import { useState } from "react";
+// import CodeMirror from "@uiw/react-codemirror";
+// import { javascript } from "@codemirror/lang-javascript";
+// import { oneDark } from "@codemirror/theme-one-dark";
+// import { Button } from "@/components/ui/button";
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Separator } from "@/components/ui/separator";
+// import { useToast } from "@/hooks/use-toast";
+// import { analysisService } from "@/services";
+// import { Loader2 } from "lucide-react";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
+
+// // Define types for analysis results
+// interface AnalysisItem {
+//   lineNumber: number;
+//   type: string;
+//   message: string;
+//   suggestion?: string;
+// }
+
+// // Sample snippets for each language
+// const languageSnippets: Record<string, string> = {
+//   javascript:
+//     '// JavaScript example\nfunction example() {\n  return "Hello, world!";\n}',
+//   python: '# Python example\ndef example():\n    return "Hello, world!"',
+//   java: '// Java example\npublic class Example {\n  public static void main(String[] args) {\n    System.out.println("Hello, world!");\n  }\n}',
+//   cpp: '// C++ example\n#include <iostream>\nint main() {\n  std::cout << "Hello, world!";\n  return 0;\n}',
+//   c: '// C example\n#include <stdio.h>\nint main() {\n  printf("Hello, world!");\n  return 0;\n}',
+//   php: '<?php\necho "Hello, world!";\n?>',
+//   typescript:
+//     '// TypeScript example\nfunction greet(): string {\n  return "Hello, world!";\n}',
+//   go: '// Go example\npackage main\nimport "fmt"\nfunc main() {\n  fmt.Println("Hello, world!")\n}',
+//   rust: '// Rust example\nfn main() {\n  println!("Hello, world!");\n}',
+// };
+
+// export function ChatPage() {
+//   const [language, setLanguage] = useState("javascript");
+//   const [code, setCode] = useState(languageSnippets["javascript"]);
+//   const [analysis, setAnalysis] = useState<AnalysisItem[]>([]);
+//   const [isLoading, setIsLoading] = useState(false);
+//   const { toast } = useToast();
+
+//   const handleAnalyze = async () => {
+//     if (!code.trim()) {
+//       toast({
+//         title: "Error",
+//         description: "Please enter some code to analyze",
+//         variant: "destructive",
+//       });
+//       return;
+//     }
+
+//     setIsLoading(true);
+//     try {
+//       const response = await analysisService.analyzeCode(code, language);
+//       const issues = response.data?.issues || [];
+//       setAnalysis(issues);
+//       toast({
+//         title: "Analysis complete",
+//         description: `Found ${issues.length} potential issues`,
+//       });
+//     } catch (error) {
+//       toast({
+//         title: "Error",
+//         description: "Failed to analyze code",
+//         variant: "destructive",
+//       });
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="flex h-[calc(100vh-65px)] w-full overflow-hidden">
+//       {/* Left Panel */}
+//       <div className="w-1/2 h-full p-4 border-r flex flex-col gap-4 relative">
+//         {/* Language Dropdown - Moved to top with high z-index */}
+//         <div className="relative z-[9999]">
+//           <Select
+//             value={language}
+//             onValueChange={(lang: string) => {
+//               setLanguage(lang);
+//               setCode(languageSnippets[lang] || "// Code example");
+//             }}
+//           >
+//             <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-2 shadow-md">
+//               <SelectValue placeholder="Select Language" />
+//             </SelectTrigger>
+//             <SelectContent
+//               className="z-[10000] bg-white dark:bg-gray-800 border-2 shadow-lg max-h-60 overflow-y-auto"
+//               position="popper"
+//               sideOffset={4}
+//             >
+//               {Object.keys(languageSnippets).map((lang) => (
+//                 <SelectItem
+//                   key={lang}
+//                   value={lang}
+//                   className="hover:bg-gray-100 dark:hover:bg-gray-700"
+//                 >
+//                   {lang.charAt(0).toUpperCase() + lang.slice(1)}
+//                 </SelectItem>
+//               ))}
+//             </SelectContent>
+//           </Select>
+//         </div>
+
+//         {/* Code Editor */}
+//         <Card className="flex-1 bg-background/90 backdrop-blur-md rounded-xl shadow-md overflow-hidden">
+//           <CardHeader className="border-b">
+//             <CardTitle className="text-lg font-semibold">Code Editor</CardTitle>
+//           </CardHeader>
+//           <CardContent className="p-0 h-[calc(100%-57px)]">
+//             <CodeMirror
+//               value={code}
+//               height="100%"
+//               extensions={[javascript()]} // optional: dynamic per language
+//               theme={oneDark}
+//               onChange={setCode}
+//               className="h-full text-sm"
+//             />
+//           </CardContent>
+//         </Card>
+
+//         {/* Analyze Button */}
+//         <Button
+//           onClick={handleAnalyze}
+//           disabled={isLoading}
+//           className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg rounded-xl text-base py-2 font-semibold"
+//         >
+//           {isLoading ? (
+//             <>
+//               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+//               Analyzing...
+//             </>
+//           ) : (
+//             "Analyze Code"
+//           )}
+//         </Button>
+//       </div>
+
+//       {/* Right Panel */}
+//       <div className="w-1/2 h-full p-4">
+//         <Card className="h-full bg-background/90 backdrop-blur-md rounded-xl shadow-md flex flex-col">
+//           <CardHeader className="border-b">
+//             <CardTitle className="text-lg font-semibold">
+//               Analysis Results
+//             </CardTitle>
+//           </CardHeader>
+//           <CardContent className="p-4 overflow-auto flex-1">
+//             {analysis.length === 0 ? (
+//               <div className="flex items-center justify-center h-full">
+//                 <p className="text-muted-foreground">
+//                   No issues found yet. Submit your code for analysis.
+//                 </p>
+//               </div>
+//             ) : (
+//               <div className="space-y-4">
+//                 {analysis.map((item, index) => (
+//                   <div key={index} className="space-y-2">
+//                     <div className="flex items-center gap-2">
+//                       <span className="font-medium">
+//                         Line {item.lineNumber}:
+//                       </span>
+//                       <span className="text-sm text-muted-foreground">
+//                         {item.type}
+//                       </span>
+//                     </div>
+//                     <p className="text-sm">{item.message}</p>
+//                     {item.suggestion && (
+//                       <div className="bg-secondary/10 p-3 rounded-md">
+//                         <p className="text-sm font-medium">Suggestion:</p>
+//                         <p className="text-sm mt-1">{item.suggestion}</p>
+//                       </div>
+//                     )}
+//                     {index < analysis.length - 1 && <Separator />}
+//                   </div>
+//                 ))}
+//               </div>
+//             )}
+//           </CardContent>
+//         </Card>
+//       </div>
+//     </div>
+//   );
+// }
+
+import { useState, useEffect } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { oneDark } from "@codemirror/theme-one-dark";
@@ -7,7 +199,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { analysisService } from "@/services";
-import { Loader2 } from "lucide-react";
+import { Loader2, Copy, CheckCircle, AlertCircle, Clock } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -15,6 +207,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import axios from "axios";
+
+import { python } from "@codemirror/lang-python";
+import { cpp } from "@codemirror/lang-cpp";
 
 // Define types for analysis results
 interface AnalysisItem {
@@ -24,167 +221,497 @@ interface AnalysisItem {
   suggestion?: string;
 }
 
+interface AnalysisResponse {
+  success: boolean;
+  has_json_output: boolean;
+  corrected_code: string;
+  issues: AnalysisItem[];
+  raw_output: string;
+  model_status?: string;
+}
+
+interface ModelStatus {
+  model_id: string;
+  loaded: boolean;
+  loading: boolean;
+  loading_time_seconds?: number;
+  ready: boolean;
+}
+
 // Sample snippets for each language
 const languageSnippets: Record<string, string> = {
-  javascript:
-    '// JavaScript example\nfunction example() {\n  return "Hello, world!";\n}',
-  python: '# Python example\ndef example():\n    return "Hello, world!"',
-  java: '// Java example\npublic class Example {\n  public static void main(String[] args) {\n    System.out.println("Hello, world!");\n  }\n}',
-  cpp: '// C++ example\n#include <iostream>\nint main() {\n  std::cout << "Hello, world!";\n  return 0;\n}',
-  c: '// C example\n#include <stdio.h>\nint main() {\n  printf("Hello, world!");\n  return 0;\n}',
-  php: '<?php\necho "Hello, world!";\n?>',
-  typescript:
-    '// TypeScript example\nfunction greet(): string {\n  return "Hello, world!";\n}',
-  go: '// Go example\npackage main\nimport "fmt"\nfunc main() {\n  fmt.Println("Hello, world!")\n}',
-  rust: '// Rust example\nfn main() {\n  println!("Hello, world!");\n}',
+  javascript: `// JavaScript example with bugs
+function calculateSum(arr) {
+  let sum = 0;
+  for (let i = 0; i <= arr.length; i++) {
+    sum += arr[i];
+  }
+  return sum;
+}`,
+  python: `# Python example with bugs
+def calculate_sum(arr):
+    sum = 0
+    for i in range(len(arr) + 1):
+        sum += arr[i]
+    return sum`,
+  java: `// Java example with bugs
+public class Calculator {
+  public static int calculateSum(int[] arr) {
+    int sum = 0;
+    for (int i = 0; i <= arr.length; i++) {
+      sum += arr[i];
+    }
+    return sum;
+  }
+}`,
+  cpp: `// C++ example with bugs
+#include <iostream>
+#include <vector>
+int calculateSum(std::vector<int> arr) {
+  int sum = 0;
+  for (int i = 0; i <= arr.size(); i++) {
+    sum += arr[i];
+  }
+  return sum;
+}`,
+  c: `// C example with bugs
+#include <stdio.h>
+int calculateSum(int arr[], int size) {
+  int sum = 0;
+  for (int i = 0; i <= size; i++) {
+    sum += arr[i];
+  }
+  return sum;
+}`,
 };
 
 export function ChatPage() {
   const [language, setLanguage] = useState("javascript");
   const [code, setCode] = useState(languageSnippets["javascript"]);
-  const [analysis, setAnalysis] = useState<AnalysisItem[]>([]);
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResponse | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(false);
+  const [modelStatus, setModelStatus] = useState<ModelStatus | null>(null);
+  const [isCheckingModel, setIsCheckingModel] = useState(true);
   const { toast } = useToast();
+  const [isCooldown, setIsCooldown] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Check model status on component mount
+  useEffect(() => {
+    checkModelStatus();
+    // Set up interval to check model status periodically
+    const interval = setInterval(checkModelStatus, 5000); // Check every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+  const getCodeExtension = () => {
+    switch (language) {
+      case "python":
+        return python();
+      case "cpp":
+      case "c":
+        return cpp();
+      default:
+        return javascript();
+    }
+  };
+  const checkModelStatus = async () => {
+    try {
+      const response = await analysisService.getModelStatus();
+      setModelStatus(response.data);
+      setIsCheckingModel(false);
+    } catch (error) {
+      console.error("Failed to check model status:", error);
+      setIsCheckingModel(false);
+    }
+  };
+
+  // const handleAnalyze = async () => {
+  //   if (!code.trim()) {
+  //     toast({
+  //       title: "Error",
+  //       description: "Please enter some code to analyze",
+  //       variant: "destructive",
+  //     });
+  //     return;
+  //   }
+
+  //   // Check if model is ready
+  //   if (!modelStatus?.ready) {
+  //     toast({
+  //       title: "Model Not Ready",
+  //       description: "The AI model is still loading. Please wait a moment.",
+  //       variant: "destructive",
+  //     });
+  //     return;
+  //   }
+
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await analysisService.analyzeCode(code, language);
+  //     const result: AnalysisResponse = response.data;
+  //     setAnalysisResult(result);
+
+  //     if (result.model_status === "loading") {
+  //       toast({
+  //         title: "Model Loading",
+  //         description:
+  //           "The AI model is still loading. Please try again in a moment.",
+  //         variant: "destructive",
+  //       });
+  //     } else if (result.has_json_output) {
+  //       toast({
+  //         title: "Analysis complete",
+  //         description: `Found ${result.issues.length} potential issues`,
+  //       });
+  //     } else {
+  //       toast({
+  //         title: "Analysis complete",
+  //         description: "Showing raw output (JSON parsing failed)",
+  //         variant: "destructive",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     toast({
+  //       title: "Error",
+  //       description: "Failed to analyze code. Please try again.",
+  //       variant: "destructive",
+  //     });
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const handleAnalyze = async () => {
-    if (!code.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter some code to analyze",
-        variant: "destructive",
-      });
-      return;
-    }
+    if (!code.trim()) return;
 
     setIsLoading(true);
+    setAnalysisResult(null);
+    setError(null);
+    setIsCooldown(true);
+
+    setTimeout(() => {
+      setIsCooldown(false);
+    }, 10000); // 10 second cooldown after a request
+
     try {
-      const response = await analysisService.analyzeCode(code, language);
-      const issues = response.data?.issues || [];
-      setAnalysis(issues);
-      toast({
-        title: "Analysis complete",
-        description: `Found ${issues.length} potential issues`,
+      const response = await analysisService.submitCode({
+        code,
+        language,
       });
+
+      setAnalysisResult(response.result);
     } catch (error) {
+      let message = "Failed to analyze code. Please try again.";
+
+      if (axios.isAxiosError(error)) {
+        if (error.code === "ECONNABORTED") {
+          message =
+            "Request timed out. The AI model is taking too long to respond.";
+        } else if (error.response?.status === 500) {
+          message =
+            "Internal server error. Please check your ML microservice logs.";
+        }
+      }
+
       toast({
         title: "Error",
-        description: "Failed to analyze code",
+        description: message,
         variant: "destructive",
       });
+
+      setError(message);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copied to clipboard",
+      description: "Code has been copied to your clipboard",
+    });
+  };
+
+  const getModelStatusDisplay = () => {
+    if (isCheckingModel) {
+      return (
+        <Alert className="mb-4">
+          <Clock className="h-4 w-4" />
+          <AlertDescription>Checking model status...</AlertDescription>
+        </Alert>
+      );
+    }
+
+    if (!modelStatus) {
+      return (
+        <Alert className="mb-4" variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Unable to connect to AI service. Please refresh the page.
+          </AlertDescription>
+        </Alert>
+      );
+    }
+
+    if (modelStatus.loading) {
+      return (
+        <Alert className="mb-4">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          <AlertDescription>
+            AI model is loading... This may take a few minutes on first startup.
+            {modelStatus.loading_time_seconds && (
+              <span className="block text-sm mt-1">
+                Loading time: {modelStatus.loading_time_seconds}s
+              </span>
+            )}
+          </AlertDescription>
+        </Alert>
+      );
+    }
+
+    if (modelStatus.loaded && modelStatus.ready) {
+      return (
+        <Alert className="mb-4" variant="default">
+          <CheckCircle className="h-4 w-4 text-green-500" />
+          <AlertDescription>
+            AI model is ready! You can now analyze your code.
+            {modelStatus.loading_time_seconds && (
+              <span className="block text-sm mt-1">
+                Model loaded in {modelStatus.loading_time_seconds}s
+              </span>
+            )}
+          </AlertDescription>
+        </Alert>
+      );
+    }
+
+    return (
+      <Alert className="mb-4" variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertDescription>
+          AI model failed to load. Please refresh the page or contact support.
+        </AlertDescription>
+      </Alert>
+    );
+  };
+
   return (
-    <div className="flex h-[calc(100vh-65px)] w-full overflow-hidden">
-      {/* Left Panel */}
-      <div className="w-1/2 h-full p-4 border-r flex flex-col gap-4 relative">
-        {/* Language Dropdown - Moved to top with high z-index */}
-        <div className="relative z-[9999]">
-          <Select
-            value={language}
-            onValueChange={(lang: string) => {
-              setLanguage(lang);
-              setCode(languageSnippets[lang] || "// Code example");
-            }}
-          >
-            <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-2 shadow-md">
-              <SelectValue placeholder="Select Language" />
-            </SelectTrigger>
-            <SelectContent
-              className="z-[10000] bg-white dark:bg-gray-800 border-2 shadow-lg max-h-60 overflow-y-auto"
-              position="popper"
-              sideOffset={4}
+    <div className="flex flex-col h-[calc(100vh-65px)] w-full overflow-hidden">
+      {/* Model Status Banner */}
+      <div className="p-4 border-b">{getModelStatusDisplay()}</div>
+
+      {/* Main Content */}
+      <div className="flex h-full overflow-hidden">
+        {/* Left Panel - Original Code */}
+        <div className="w-1/3 h-full p-4 border-r flex flex-col gap-4">
+          {/* Language Dropdown */}
+          <div className="relative z-[9999]">
+            <Select
+              value={language}
+              onValueChange={(lang: string) => {
+                setLanguage(lang);
+                setCode(languageSnippets[lang] || "// Code example");
+                setAnalysisResult(null); // Clear previous results
+              }}
             >
-              {Object.keys(languageSnippets).map((lang) => (
-                <SelectItem
-                  key={lang}
-                  value={lang}
-                  className="hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  {lang.charAt(0).toUpperCase() + lang.slice(1)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+              <SelectTrigger className="w-full bg-white dark:bg-gray-800 border-2 shadow-md">
+                <SelectValue placeholder="Select Language" />
+              </SelectTrigger>
+              <SelectContent
+                className="z-[10000] bg-white dark:bg-gray-800 border-2 shadow-lg max-h-60 overflow-y-auto"
+                position="popper"
+                sideOffset={4}
+              >
+                {Object.keys(languageSnippets).map((lang) => (
+                  <SelectItem
+                    key={lang}
+                    value={lang}
+                    className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    {lang.charAt(0).toUpperCase() + lang.slice(1)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Original Code Editor */}
+          <Card className="flex-1 bg-background/90 backdrop-blur-md rounded-xl shadow-md overflow-hidden">
+            <CardHeader className="border-b">
+              <CardTitle className="text-lg font-semibold">
+                Original Code (Buggy)
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0 h-[calc(100%-57px)]">
+              <CodeMirror
+                value={code}
+                height="100%"
+                extensions={[getCodeExtension()]}
+                theme={oneDark}
+                onChange={setCode}
+                className="h-full text-sm"
+              />
+            </CardContent>
+          </Card>
+
+          {/* Analyze Button */}
+          <Button
+            onClick={handleAnalyze}
+            disabled={isLoading || isCooldown || !modelStatus?.ready}
+            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg rounded-xl text-base py-2 font-semibold disabled:opacity-50"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Analyzing...
+              </>
+            ) : !modelStatus?.ready ? (
+              <>
+                <Clock className="mr-2 h-4 w-4" />
+                Waiting for AI Model...
+              </>
+            ) : (
+              "🔍 Analyze & Fix Code"
+            )}
+          </Button>
         </div>
 
-        {/* Code Editor */}
-        <Card className="flex-1 bg-background/90 backdrop-blur-md rounded-xl shadow-md overflow-hidden">
-          <CardHeader className="border-b">
-            <CardTitle className="text-lg font-semibold">Code Editor</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0 h-[calc(100%-57px)]">
-            <CodeMirror
-              value={code}
-              height="100%"
-              extensions={[javascript()]} // optional: dynamic per language
-              theme={oneDark}
-              onChange={setCode}
-              className="h-full text-sm"
-            />
-          </CardContent>
-        </Card>
-
-        {/* Analyze Button */}
-        <Button
-          onClick={handleAnalyze}
-          disabled={isLoading}
-          className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg rounded-xl text-base py-2 font-semibold"
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Analyzing...
-            </>
-          ) : (
-            "Analyze Code"
-          )}
-        </Button>
-      </div>
-
-      {/* Right Panel */}
-      <div className="w-1/2 h-full p-4">
-        <Card className="h-full bg-background/90 backdrop-blur-md rounded-xl shadow-md flex flex-col">
-          <CardHeader className="border-b">
-            <CardTitle className="text-lg font-semibold">
-              Analysis Results
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 overflow-auto flex-1">
-            {analysis.length === 0 ? (
-              <div className="flex items-center justify-center h-full">
-                <p className="text-muted-foreground">
-                  No issues found yet. Submit your code for analysis.
-                </p>
+        {/* Middle Panel - Corrected Code */}
+        <div className="w-1/3 h-full p-4 border-r">
+          <Card className="h-full bg-background/90 backdrop-blur-md rounded-xl shadow-md flex flex-col">
+            <CardHeader className="border-b">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  Corrected Code
+                </CardTitle>
+                {analysisResult?.corrected_code && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      copyToClipboard(analysisResult.corrected_code)
+                    }
+                    className="flex items-center gap-1"
+                  >
+                    <Copy className="w-4 h-4" />
+                    Copy
+                  </Button>
+                )}
               </div>
-            ) : (
-              <div className="space-y-4">
-                {analysis.map((item, index) => (
-                  <div key={index} className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">
-                        Line {item.lineNumber}:
-                      </span>
-                      <span className="text-sm text-muted-foreground">
-                        {item.type}
-                      </span>
-                    </div>
-                    <p className="text-sm">{item.message}</p>
-                    {item.suggestion && (
-                      <div className="bg-secondary/10 p-3 rounded-md">
-                        <p className="text-sm font-medium">Suggestion:</p>
-                        <p className="text-sm mt-1">{item.suggestion}</p>
-                      </div>
-                    )}
-                    {index < analysis.length - 1 && <Separator />}
+            </CardHeader>
+            <CardContent className="p-0 flex-1 overflow-hidden">
+              {!analysisResult ? (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-muted-foreground">
+                    Submit your code to see the corrected version
+                  </p>
+                </div>
+              ) : analysisResult.has_json_output &&
+                analysisResult.corrected_code ? (
+                <CodeMirror
+                  value={analysisResult.corrected_code}
+                  height="100%"
+                  extensions={[javascript()]}
+                  theme={oneDark}
+                  editable={false}
+                  className="h-full text-sm"
+                />
+              ) : (
+                <div className="p-4 flex items-center justify-center h-full">
+                  <p className="text-muted-foreground">
+                    No corrected code available
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Panel - Analysis Results */}
+        <div className="w-1/3 h-full p-4">
+          <Card className="h-full bg-background/90 backdrop-blur-md rounded-xl shadow-md flex flex-col">
+            <CardHeader className="border-b">
+              <CardTitle className="text-lg font-semibold">
+                Analysis Results
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 overflow-auto flex-1">
+              {!analysisResult ? (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-muted-foreground">
+                    No analysis results yet. Submit your code for analysis.
+                  </p>
+                </div>
+              ) : !analysisResult.has_json_output ? (
+                // Show raw output as fallback
+                <div className="space-y-4">
+                  <Alert>
+                    <AlertDescription>
+                      ⚠️ Unable to parse structured output. Showing raw AI
+                      response:
+                    </AlertDescription>
+                  </Alert>
+                  <div className="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg">
+                    <pre className="whitespace-pre-wrap text-sm">
+                      {analysisResult.raw_output}
+                    </pre>
                   </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                </div>
+              ) : analysisResult.issues.length === 0 ? (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-green-600 font-medium">
+                    ✅ No issues found! Your code looks good.
+                  </p>
+                </div>
+              ) : (
+                // Show structured line-by-line analysis
+                <div className="space-y-4">
+                  <div className="text-sm text-muted-foreground mb-4">
+                    Found {analysisResult.issues.length} issue(s):
+                  </div>
+                  {analysisResult.issues.map((item, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-red-600">
+                          Line {item.lineNumber}:
+                        </span>
+                        <span className="text-sm text-muted-foreground bg-red-100 dark:bg-red-900/20 px-2 py-1 rounded">
+                          {item.type}
+                        </span>
+                      </div>
+                      <div className="bg-red-50 dark:bg-red-900/10 p-3 rounded-md border-l-4 border-red-500">
+                        <p className="text-sm font-medium text-red-800 dark:text-red-200">
+                          Problem:
+                        </p>
+                        <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                          {item.message}
+                        </p>
+                      </div>
+                      {item.suggestion && (
+                        <div className="bg-green-50 dark:bg-green-900/10 p-3 rounded-md border-l-4 border-green-500">
+                          <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                            💡 Solution:
+                          </p>
+                          <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+                            {item.suggestion}
+                          </p>
+                        </div>
+                      )}
+                      {index < analysisResult.issues.length - 1 && (
+                        <Separator />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

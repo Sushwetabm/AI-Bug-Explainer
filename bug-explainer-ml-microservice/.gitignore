@@ -4,3 +4,6 @@ venv/
 .env
 .venv
 Lib
+model_cache/
+offload/
+

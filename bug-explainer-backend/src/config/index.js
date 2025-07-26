@@ -22,6 +22,6 @@ module.exports = {
   },
   mlService: {
     url: process.env.ML_SERVICE_URL || "http://localhost:8000",
-    timeout: parseInt(process.env.ML_SERVICE_TIMEOUT) || 30000,
+    timeout: parseInt(process.env.ML_SERVICE_TIMEOUT) || 300000,
   },
 };
