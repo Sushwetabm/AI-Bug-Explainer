@@ -1,0 +1,12 @@
+__pycache__
+.venv
+.git
+*.md
+*.pdf
+*.pt
+*.bin
+*.log
+.venv/
+*.pyc
+.DS_Store
+model_cache/

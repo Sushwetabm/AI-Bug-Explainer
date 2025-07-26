@@ -1,27 +1,32 @@
-# Dockerfile
-
+# ✅ Use official slim image
 FROM python:3.10-slim
 
-# Set environment variables for caching
+# ✅ Set working directory
+WORKDIR /app
+
+# ✅ Set environment variables early to ensure cache use in setup.py
 ENV TRANSFORMERS_CACHE=/app/model_cache \
     HF_HOME=/app/model_cache \
     TORCH_HOME=/app/model_cache \
     TOKENIZERS_PARALLELISM=false \
     OMP_NUM_THREADS=4
 
-WORKDIR /app
+# ✅ Install only necessary OS packages and clean cache
+RUN apt-get update && apt-get install -y git \
+ && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements
-COPY requirements.txt .
-
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy app files
+# ✅ Copy files (excluding model_cache, logs, etc. via .dockerignore)
 COPY . .
 
-# Expose port
+# ✅ Upgrade pip + install deps without cache
+RUN pip install --upgrade pip \
+ && pip install --no-cache-dir -r requirements.txt
+
+# ✅ Run setup.py to download the model
+RUN python setup.py
+
+# ✅ Expose FastAPI port
 EXPOSE 8000
 
-# Run with Uvicorn
+# ✅ Launch FastAPI (production-style)
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--timeout-keep-alive", "120", "--log-level", "info"]
