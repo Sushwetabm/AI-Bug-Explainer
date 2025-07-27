@@ -21,7 +21,8 @@ module.exports = {
     expiresIn: JWT_EXPIRE || "1h",
   },
   mlService: {
-    url: process.env.ML_SERVICE_URL || "http://localhost:8000",
+    url:
+      process.env.ML_SERVICE_URL || "https://Sushyy-bug-explainer-ml.hf.space",
     timeout: parseInt(process.env.ML_SERVICE_TIMEOUT) || 300000,
   },
 };

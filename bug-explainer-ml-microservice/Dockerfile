@@ -29,4 +29,4 @@ RUN python setup.py
 EXPOSE 7860
 
 # ✅ Launch FastAPI on port 7860 for HF Space
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860", "--timeout-]()
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860", "--timeout-keep-alive", "120", "--log-level", "info"]

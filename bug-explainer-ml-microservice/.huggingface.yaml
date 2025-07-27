@@ -1,0 +1,6 @@
+# .huggingface.yaml
+title: Bug Explainer ML Microservice
+emoji: 🐞
+colorFrom: blue
+colorTo: pink
+sdk: docker
