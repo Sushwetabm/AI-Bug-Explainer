@@ -403,7 +403,13 @@ async def analyze_for_frontend(req: AnalyzeRequest):
 async def get_analysis_history():
     """Get analysis history (placeholder)"""
     return {"data": []}
-
+@app.get("/")
+async def root():
+    return {
+        "message": "👋 Bug Explainer ML microservice is running.",
+        "status": "OK",
+        "model_ready": is_model_loaded()
+    }
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
