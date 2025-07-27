@@ -25,8 +25,8 @@ RUN pip install --upgrade pip \
 # ✅ Run setup.py to download the model
 RUN python setup.py
 
-# ✅ Expose FastAPI port
-EXPOSE 8000
+# ✅ Expose Hugging Face Space-required port
+EXPOSE 7860
 
-# ✅ Launch FastAPI (production-style)
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--timeout-keep-alive", "120", "--log-level", "info"]
+# ✅ Launch FastAPI on port 7860 for HF Space
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860", "--timeout-]()
