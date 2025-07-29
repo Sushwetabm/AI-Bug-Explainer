@@ -7,7 +7,8 @@ const auth = require("../middleware/auth");
 const router = express.Router();
 
 // ML Service configuration from environment
-const ML_SERVICE_URL = process.env.ML_SERVICE_URL || "https://Sushyy-bug-explainer-ml.hf.space";
+const ML_SERVICE_URL =
+  process.env.ML_SERVICE_URL || "https://Sushyy-bug-explainer-ml.hf.space";
 const ML_SERVICE_TIMEOUT = parseInt(process.env.ML_SERVICE_TIMEOUT) || 120000;
 
 console.log("🔧 ML Service URL:", ML_SERVICE_URL);
@@ -27,7 +28,7 @@ console.log("🕐 ML Service Timeout:", ML_SERVICE_TIMEOUT + "ms");
  *       503:
  *         description: ML service unavailable
  */
-router.get("/model/status", auth(), async (req, res) => {
+router.get("/model/status", async (req, res) => {
   try {
     const mlUrl = `${ML_SERVICE_URL}/model/status`;
     console.log(`🔍 Checking ML service at: ${mlUrl}`);
