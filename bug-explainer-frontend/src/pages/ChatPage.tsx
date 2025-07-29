@@ -401,19 +401,6 @@ export function ChatPage() {
                     No analysis results yet. Submit your code for analysis.
                   </p>
                 </div>
-              ) : !analysisResult.has_json_output ? (
-                // Show raw output as fallback
-                <div className="space-y-4">
-                  <Alert>
-                    <AlertDescription>
-                      ⚠️ Unable to parse structured output. Showing raw AI
-                      response:
-                    </AlertDescription>
-                  </Alert>
-                  <div className="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg prose dark:prose-invert max-w-none">
-                    <ReactMarkdown>{analysisResult.raw_output}</ReactMarkdown>
-                  </div>
-                </div>
               ) : analysisResult.issues.length === 0 ? (
                 <div className="flex items-center justify-center h-full">
                   <p className="text-green-600 font-medium">
@@ -421,44 +408,22 @@ export function ChatPage() {
                   </p>
                 </div>
               ) : (
-                // Show structured line-by-line analysis
                 <div className="space-y-4">
                   <div className="text-sm text-muted-foreground mb-4">
                     Found {analysisResult.issues.length} issue(s):
                   </div>
                   {analysisResult.issues.map((item, index) => (
                     <div key={index} className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-red-600">
-                          Line {item.lineNumber}:
-                        </span>
-                        <span className="text-sm text-muted-foreground bg-red-100 dark:bg-red-900/20 px-2 py-1 rounded">
-                          {item.type}
-                        </span>
-                      </div>
-                      <div className="bg-red-50 dark:bg-red-900/10 p-3 rounded-md border-l-4 border-red-500">
-                        <p className="text-sm font-medium text-red-800 dark:text-red-200">
-                          Problem:
-                        </p>
-                        <p className="text-sm text-red-700 dark:text-red-300 mt-1">
-                          {item.message}
-                        </p>
-                      </div>
-                      {item.suggestion && (
-                        <div className="bg-green-50 dark:bg-green-900/10 p-3 rounded-md border-l-4 border-green-500">
-                          <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                            💡 Solution:
-                          </p>
-                          <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                            {item.suggestion}
-                          </p>
-                        </div>
-                      )}
-                      {index < analysisResult.issues.length - 1 && (
-                        <Separator />
-                      )}
+                      {/* Issue display */}
                     </div>
                   ))}
+
+                  {/* ✅ Always render raw_output markdown if present */}
+                  {analysisResult.raw_output && (
+                    <div className="mt-6 w-full bg-gray-100 dark:bg-gray-900 p-4 rounded-lg prose dark:prose-invert max-w-none">
+                      <ReactMarkdown>{analysisResult.raw_output}</ReactMarkdown>
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>
