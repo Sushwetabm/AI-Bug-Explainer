@@ -1,180 +1,3 @@
-# from fastapi import FastAPI, HTTPException
-# from fastapi.middleware.cors import CORSMiddleware
-# from pydantic import BaseModel
-# from model import load_model
-# from analyzer import analyze_code
-# import logging
-
-# app = FastAPI(
-#     title="AI Bug Explainer",
-#     description="An AI service that detects and fixes bugs in code",
-#     version="1.0.0"
-# )
-
-# # CORS setup
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],  # Replace with your frontend URL in prod
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
-
-# # Logging setup
-# logging.basicConfig(level=logging.INFO)
-
-# class AnalyzeRequest(BaseModel):
-#     language: str
-#     code: str
-
-# @app.post("/analyze")
-# async def analyze(req: AnalyzeRequest):
-#     logging.info(f"🔍 Received code for analysis ({req.language})")
-
-#     result = analyze_code(req.language, req.code, tokenizer, model)
-
-#     if result is None:
-#         raise HTTPException(status_code=500, detail="Model failed to return any response.")
-
-#     if not isinstance(result, dict):
-#         logging.warning("⚠️ Model did not return valid JSON, sending raw output")
-#         return {
-#             "bugs": [],
-#             "corrected_code": "",
-#             "raw_output": result
-#         }
-
-#     return {
-#         "bugs": result.get("bug_analysis", []),
-#         "corrected_code": result.get("corrected_code", ""),
-#         "raw_output": ""  # So frontend doesn't break
-#     }
-
-# # Load model
-# print("🔧 Loading model...")
-# tokenizer, model = load_model()
-# print("✅ Model loaded!")
-
-# from fastapi import FastAPI, HTTPException
-# from fastapi.middleware.cors import CORSMiddleware
-# from pydantic import BaseModel
-# from model import load_model
-# from analyzer import analyze_code
-# import logging
-
-# app = FastAPI(
-#     title="AI Bug Explainer ML Microservice",
-#     description="An AI service that detects and fixes bugs in code",
-#     version="1.0.0"
-# )
-
-# # CORS setup
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],  # Replace with your frontend URL in prod
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
-
-# # Logging setup
-# logging.basicConfig(level=logging.INFO)
-
-# class AnalyzeRequest(BaseModel):
-#     language: str
-#     code: str
-
-# # Transform bug analysis to match frontend expectations
-# def transform_bug_to_issue(bug):
-#     """Transform ML service bug format to frontend issue format"""
-#     return {
-#         "lineNumber": bug.get("line_number", 0),
-#         "type": bug.get("error_message", "Unknown Error"),
-#         "message": bug.get("explanation", "No explanation provided"),
-#         "suggestion": bug.get("fix_suggestion", "No suggestion provided")
-#     }
-
-# # Keep your original endpoint for backward compatibility
-# @app.post("/analyze")
-# async def analyze(req: AnalyzeRequest):
-#     logging.info(f"🔍 Received code for analysis ({req.language})")
-
-#     result = analyze_code(req.language, req.code, tokenizer, model)
-
-#     if result is None:
-#         raise HTTPException(status_code=500, detail="Model failed to return any response.")
-
-#     if not isinstance(result, dict):
-#         logging.warning("⚠️ Model did not return valid JSON, sending raw output")
-#         return {
-#             "bugs": [],
-#             "corrected_code": "",
-#             "raw_output": result
-#         }
-
-#     return {
-#         "bugs": result.get("bug_analysis", []),
-#         "corrected_code": result.get("corrected_code", ""),
-#         "raw_output": ""  # So frontend doesn't break
-#     }
-
-# # NEW: Add frontend-compatible endpoint
-# @app.post("/analysis/submit")
-# async def analyze_for_frontend(req: AnalyzeRequest):
-#     logging.info(f"🔍 Frontend: Received code for analysis ({req.language})")
-
-#     result = analyze_code(req.language, req.code, tokenizer, model)
-
-#     if result is None:
-#         raise HTTPException(status_code=500, detail="Model failed to return any response.")
-
-#     # If result is not valid JSON, return raw output as fallback
-#     if not isinstance(result, dict):
-#         logging.warning("⚠️ Model did not return valid JSON, showing raw output")
-#         return {
-#             "success": False,
-#             "has_json_output": False,
-#             "corrected_code": "",
-#             "issues": [],
-#             "raw_output": str(result)
-#         }
-
-#     # Successfully parsed JSON
-#     bugs = result.get("bug_analysis", [])
-#     issues = [transform_bug_to_issue(bug) for bug in bugs]
-#     corrected_code = result.get("corrected_code", "")
-
-#     return {
-#         "success": True,
-#         "has_json_output": True,
-#         "corrected_code": corrected_code,
-#         "issues": issues,
-#         "raw_output": ""
-#     }
-
-# # Add history endpoint (placeholder for now)
-# @app.get("/analysis/history")
-# async def get_analysis_history():
-#     # TODO: Implement database storage for history
-#     # For now, return empty array to match frontend expectations
-#     return {"data": []}
-
-# # Health check endpoint
-# @app.get("/health")
-# async def health_check():
-#     return {
-#         "status": "healthy", 
-#         "model_loaded": tokenizer is not None and model is not None
-#     }
-
-# # Load model
-# print("🔧 Loading model...")
-# tokenizer, model = load_model()
-# print("✅ Model loaded!")
-
-# if __name__ == "__main__":
-#     import uvicorn
-#     uvicorn.run(app, host="0.0.0.0", port=8000)
 
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
@@ -295,7 +118,8 @@ async def analyze(req: AnalyzeRequest):
     
     try:
         tokenizer, model = get_model()
-        result = analyze_code(req.language, req.code, tokenizer, model)
+        result = result = analyze_code(tokenizer, model, req.language, req.code)
+
         
         if result is None:
             raise HTTPException(status_code=500, detail="Model failed to return any response.")
@@ -350,7 +174,8 @@ async def analyze_for_frontend(req: AnalyzeRequest):
     
     try:
         tokenizer, model = get_model()
-        result = analyze_code(req.language, req.code, tokenizer, model)
+        result = result = analyze_code(tokenizer, model, req.language, req.code)
+
         
         if result is None:
             return {
