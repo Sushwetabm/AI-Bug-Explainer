@@ -401,7 +401,7 @@ export function ChatPage() {
         code,
         language,
       });
-
+      console.log("API response:", response);
       setAnalysisResult(response.result);
     } catch (error) {
       let message = "Failed to analyze code. Please try again.";
