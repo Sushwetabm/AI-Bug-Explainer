@@ -27,7 +27,7 @@ export const analysisService = {
           timeout: 300000, // 2-minute timeout for ML processing
         }
       );
-      return response.data.result; // Extract the result from the backend response
+      return response.data; // Extract the result from the backend response
     } catch (error) {
       console.error("Analysis API error:", error);
       throw error;

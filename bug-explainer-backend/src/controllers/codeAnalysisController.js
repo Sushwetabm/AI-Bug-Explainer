@@ -9,20 +9,39 @@ const submitCode = async (req, res, next) => {
   try {
     const { code, language } = req.body;
     const userId = req.user.id;
-
-    console.log(
-      `🔍 Submitting code for analysis - User: ${userId}, Language: ${language}`
-    );
-
-    // Call service for immediate analysis
+    console.log("🔍 Controller received:", {
+      userId,
+      language,
+      codeLength: code.length,
+    });
     const result = await analysisService.submitCode(userId, code, language);
-
-    console.log(`📝 Analysis completed for record: ${result._id}`);
-
-    // Return the ML results directly (what frontend expects)
-    res.status(httpStatus.CREATED).json(result.mlResults);
+    console.log("📝 Service returned:", {
+      hasResult: !!result,
+      hasMLResults: !!result?.mlResults,
+      resultKeys: result ? Object.keys(result) : [],
+      mlResultsKeys: result?.mlResults ? Object.keys(result.mlResults) : [],
+    });
+    // Return ML results directly (what frontend expects)
+    if (result && result.mlResults) {
+      res.status(httpStatus.CREATED).json(result.mlResults);
+    } else {
+      // Fallback if mlResults is missing
+      res.status(httpStatus.CREATED).json({
+        success: false,
+        has_json_output: false,
+        corrected_code: "",
+        issues: [],
+        raw_output: "Analysis failed to return results",
+        model_status: "error",
+      });
+    }
   } catch (error) {
     console.error("❌ Controller error:", error);
+    console.error("❌ Controller error details:", {
+      message: error.message,
+      stack: error.stack,
+      type: error.constructor.name,
+    });
     next(error);
   }
 };
