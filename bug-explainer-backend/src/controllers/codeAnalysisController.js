@@ -5,7 +5,7 @@ const { analysisService } = require("../services");
 /**
  * Submit code for immediate analysis (what your frontend expects)
  */
-const submitCode = async (req, res, next) => {
+const res.status(error.status || error.statusCode || 500).json(errorResponse);
   try {
     console.log("🚀 Controller started - submitCode");
 
