@@ -1,8 +1,7 @@
 class ApiError extends Error {
-  constructor(statusCode, message, isOperational = true, stack = "") {
+  constructor(statusCode = 500, message, isOperational = true, stack = "") {
     super(message);
 
-    // Ensure properties stay enumerable and configurable
     Object.defineProperties(this, {
       statusCode: {
         value: statusCode,
