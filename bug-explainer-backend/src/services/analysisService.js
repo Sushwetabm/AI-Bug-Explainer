@@ -175,7 +175,11 @@ const processAnalysis = async (analysisId) => {
 
 const analyzeCodeWithML = async (code, language) => {
   try {
-    const response = await axios.post(ML_SERVICE_URL, { code, language });
+    // const response = await axios.post(ML_SERVICE_URL, { code, language });
+    const response = await axios.post(`${ML_SERVICE_URL}/analysis/submit`, {
+      code,
+      language,
+    });
 
     const { bugs, corrected_code } = response.data;
 
@@ -259,4 +263,3 @@ module.exports = {
   getUserAnalyses,
   deleteAnalysis,
 };
-
