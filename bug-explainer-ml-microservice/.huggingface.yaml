@@ -1,0 +1,6 @@
+# .huggingface.yml
+title: Bug Explainer AI
+sdk: docker
+gpu: true
+accelerator: "T4" # A10G is a common GPU type for Hugging Face
+timeout: 600
