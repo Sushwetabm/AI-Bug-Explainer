@@ -20,9 +20,10 @@ app.use(helmet());
 
 // ✅ Allow these frontend URLs to access the backend
 const allowedOrigins = [
-  "https://ai-bug-explainer-production.up.railway.app", // frontend on Railway
+  "https://ai-bug-explainer-production.up.railway.app", // ✅ Your frontend (still correct)
+  "https://ai-bug-explainer-production-d771.up.railway.app", // ✅ Your current backend (must allow itself)
   process.env.FRONTEND_URL,
-  "http://localhost:5000", // frontend local dev
+  "http://localhost:5000",
   "http://localhost:3000",
 ];
 
