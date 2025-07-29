@@ -79,13 +79,13 @@ const submitCode = async (userId, code, language) => {
     });
 
     // Check if ML service returned an error
-    if (mlResponse.status !== 200) {
-      console.error(
-        "❌ ML service returned non-200 status:",
-        mlResponse.status
-      );
-      throw new Error(
-        `ML service returned status ${mlResponse.status}: ${mlResponse.statusText}`
+    if (!mlResponse || mlResponse.status !== 200) {
+      const status = mlResponse?.status ?? "N/A";
+      const statusText = mlResponse?.statusText ?? "No status text";
+      console.error("❌ ML service returned non-200 status:", status);
+      throw new ApiError(
+        typeof status === "number" ? status : 500,
+        `ML service returned status ${status}: ${statusText}`
       );
     }
 
