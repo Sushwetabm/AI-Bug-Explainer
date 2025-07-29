@@ -22,7 +22,8 @@ module.exports = {
   },
   mlService: {
     url:
-      process.env.ML_SERVICE_URL || "https://Sushyy-bug-explainer-ml.hf.space",
+      process.env.ML_SERVICE_URL ||
+      "https://eventually-streaming-millions-benefits.trycloudflare.com",
     timeout: parseInt(process.env.ML_SERVICE_TIMEOUT) || 300000,
   },
 };

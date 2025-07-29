@@ -7,7 +7,8 @@ const axios = require("axios");
 
 // ML Service configuration
 const ML_SERVICE_URL =
-  process.env.ML_SERVICE_URL || "https://Sushyy-bug-explainer-ml.hf.space";
+  process.env.ML_SERVICE_URL ||
+  "https://eventually-streaming-millions-benefits.trycloudflare.com";
 const ML_SERVICE_TIMEOUT = parseInt(process.env.ML_SERVICE_TIMEOUT) || 120000;
 
 /**

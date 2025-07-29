@@ -8,7 +8,8 @@ const router = express.Router();
 
 // ML Service configuration from environment
 const ML_SERVICE_URL =
-  process.env.ML_SERVICE_URL || "https://Sushyy-bug-explainer-ml.hf.space";
+  process.env.ML_SERVICE_URL ||
+  "https://eventually-streaming-millions-benefits.trycloudflare.com";
 const ML_SERVICE_TIMEOUT = parseInt(process.env.ML_SERVICE_TIMEOUT) || 120000;
 
 console.log("🔧 ML Service URL:", ML_SERVICE_URL);
