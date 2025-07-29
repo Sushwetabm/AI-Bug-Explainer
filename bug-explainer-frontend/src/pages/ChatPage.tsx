@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import axios from "axios";
-
+import ReactMarkdown from "react-markdown";
 import { python } from "@codemirror/lang-python";
 import { cpp } from "@codemirror/lang-cpp";
 
@@ -410,10 +410,8 @@ export function ChatPage() {
                       response:
                     </AlertDescription>
                   </Alert>
-                  <div className="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg">
-                    <pre className="whitespace-pre-wrap text-sm">
-                      {analysisResult.raw_output}
-                    </pre>
+                  <div className="bg-gray-100 dark:bg-gray-900 p-4 rounded-lg prose dark:prose-invert max-w-none">
+                    <ReactMarkdown>{analysisResult.raw_output}</ReactMarkdown>
                   </div>
                 </div>
               ) : analysisResult.issues.length === 0 ? (
