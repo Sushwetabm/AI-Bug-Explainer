@@ -7,42 +7,143 @@ const { analysisService } = require("../services");
  */
 const submitCode = async (req, res, next) => {
   try {
+    console.log("🚀 Controller started - submitCode");
+
+    // Log request details
     const { code, language } = req.body;
-    const userId = req.user.id;
-    console.log("🔍 Controller received:", {
-      userId,
-      language,
-      codeLength: code.length,
+    const userId = req.user?.id;
+
+    console.log("📝 Request details:", {
+      userId: userId,
+      language: language,
+      codeLength: code ? code.length : 0,
+      hasUser: !!req.user,
+      userKeys: req.user ? Object.keys(req.user) : [],
     });
-    const result = await analysisService.submitCode(userId, code, language);
-    console.log("📝 Service returned:", {
-      hasResult: !!result,
-      hasMLResults: !!result?.mlResults,
-      resultKeys: result ? Object.keys(result) : [],
-      mlResultsKeys: result?.mlResults ? Object.keys(result.mlResults) : [],
-    });
-    // Return ML results directly (what frontend expects)
-    if (result && result.mlResults) {
-      res.status(httpStatus.CREATED).json(result.mlResults);
-    } else {
-      // Fallback if mlResults is missing
-      res.status(httpStatus.CREATED).json({
+
+    // Validate required fields
+    if (!code || !language) {
+      console.error("❌ Missing required fields:", {
+        hasCode: !!code,
+        hasLanguage: !!language,
+      });
+      return res.status(400).json({
         success: false,
         has_json_output: false,
         corrected_code: "",
         issues: [],
-        raw_output: "Analysis failed to return results",
+        raw_output: "Missing required fields: code and language are required",
         model_status: "error",
       });
     }
+
+    if (!userId) {
+      console.error("❌ No user ID found");
+      return res.status(401).json({
+        success: false,
+        has_json_output: false,
+        corrected_code: "",
+        issues: [],
+        raw_output: "Authentication required",
+        model_status: "error",
+      });
+    }
+
+    console.log(
+      `🔍 Calling analysisService.submitCode for user: ${userId}, language: ${language}`
+    );
+
+    // Call service for immediate analysis
+    const result = await analysisService.submitCode(userId, code, language);
+
+    console.log("📊 Service response structure:", {
+      hasResult: !!result,
+      resultType: typeof result,
+      resultKeys: result ? Object.keys(result) : [],
+      hasMLResults: !!(result && result.mlResults),
+      mlResultsType:
+        result && result.mlResults ? typeof result.mlResults : "undefined",
+      mlResultsKeys:
+        result && result.mlResults ? Object.keys(result.mlResults) : [],
+    });
+
+    // Check if we have valid results
+    if (!result) {
+      console.error("❌ No result returned from service");
+      return res.status(500).json({
+        success: false,
+        has_json_output: false,
+        corrected_code: "",
+        issues: [],
+        raw_output: "Service returned no result",
+        model_status: "error",
+      });
+    }
+
+    // Check for mlResults
+    if (!result.mlResults) {
+      console.error("❌ No mlResults in service response");
+      console.error("Available keys:", Object.keys(result));
+      return res.status(500).json({
+        success: false,
+        has_json_output: false,
+        corrected_code: "",
+        issues: [],
+        raw_output: "Service returned result but no mlResults",
+        model_status: "error",
+      });
+    }
+
+    console.log("✅ Returning mlResults:", {
+      success: result.mlResults.success,
+      hasJsonOutput: result.mlResults.has_json_output,
+      correctedCodeLength: result.mlResults.corrected_code
+        ? result.mlResults.corrected_code.length
+        : 0,
+      issuesCount: result.mlResults.issues ? result.mlResults.issues.length : 0,
+      modelStatus: result.mlResults.model_status,
+    });
+
+    console.log(`📝 Analysis completed for record: ${result._id || "unknown"}`);
+
+    // Return the ML results directly (what frontend expects)
+    res.status(httpStatus.CREATED).json(result.mlResults);
   } catch (error) {
-    console.error("❌ Controller error:", error);
     console.error("❌ Controller error details:", {
       message: error.message,
+      name: error.name,
       stack: error.stack,
-      type: error.constructor.name,
+      code: error.code,
+      status: error.status || error.statusCode,
     });
-    next(error);
+
+    // Log the full error object
+    console.error("❌ Full error object:", error);
+
+    // If it's already an API error, let the error handler deal with it
+    if (error instanceof ApiError) {
+      console.error("❌ ApiError detected, passing to error handler");
+      return next(error);
+    }
+
+    // For other errors, return a structured response
+    const errorResponse = {
+      success: false,
+      has_json_output: false,
+      corrected_code: "",
+      issues: [],
+      raw_output: `Analysis failed: ${error.message || "Unknown error"}`,
+      model_status: "error",
+      error_details: {
+        name: error.name,
+        message: error.message,
+        code: error.code,
+      },
+    };
+
+    console.error("❌ Returning error response:", errorResponse);
+
+    res.status(500).json(errorResponse);
   }
 };
 
