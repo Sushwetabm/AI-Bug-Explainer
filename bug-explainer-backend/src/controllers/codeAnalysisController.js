@@ -127,6 +127,14 @@ const submitCode = async (req, res, next) => {
     }
 
     // For other errors, return a structured response
+    // Use fallback if status is not a number
+    const safeStatus =
+      typeof error.statusCode === "number"
+        ? error.statusCode
+        : typeof error.status === "number"
+          ? error.status
+          : 500;
+
     const errorResponse = {
       success: false,
       has_json_output: false,
@@ -135,15 +143,16 @@ const submitCode = async (req, res, next) => {
       raw_output: `Analysis failed: ${error.message || "Unknown error"}`,
       model_status: "error",
       error_details: {
-        name: error.name,
-        message: error.message,
-        code: error.code,
+        name: error.name || "UnknownError",
+        message: error.message || "Unknown error",
+        code: error.code || "UNKNOWN",
+        status: safeStatus,
       },
     };
 
     console.error("❌ Returning error response:", errorResponse);
 
-    res.status(500).json(errorResponse);
+    res.status(safeStatus).json(errorResponse);
   }
 };
 
