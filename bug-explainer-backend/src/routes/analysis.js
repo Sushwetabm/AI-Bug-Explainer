@@ -28,7 +28,7 @@ console.log("🕐 ML Service Timeout:", ML_SERVICE_TIMEOUT + "ms");
  *       503:
  *         description: ML service unavailable
  */
-router.get("/model/status", async (req, res) => {
+router.get("/model/status", auth(), async (req, res) => {
   try {
     const mlUrl = `${ML_SERVICE_URL}/model/status`;
     console.log(`🔍 Checking ML service at: ${mlUrl}`);
@@ -86,7 +86,7 @@ router.get("/model/status", async (req, res) => {
 router.get("/ml/health", auth(), async (req, res) => {
   try {
     const response = await axios.get(`${ML_SERVICE_URL}/health`, {
-      timeout: 300000, // Shorter timeout for health check
+      timeout: 30000, // Shorter timeout for health check
     });
 
     res.json(response.data);
@@ -135,66 +135,7 @@ router.post(
   "/submit",
   auth(),
   validate(analysisValidation.submitCode),
-  async (req, res) => {
-    try {
-      const { code, language } = req.body;
-
-      console.log(
-        `🔍 Calling ML service at: ${ML_SERVICE_URL}/analysis/submit`
-      );
-      console.log(`📝 Code length: ${code.length}, Language: ${language}`);
-
-      // Call ML service directly for immediate analysis
-      const mlResponse = await axios.post(
-        `${ML_SERVICE_URL}/analysis/submit`,
-        {
-          code,
-          language,
-        },
-        {
-          timeout: ML_SERVICE_TIMEOUT, // Use environment timeout
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      console.log("✅ ML service responded successfully");
-      console.log("📄 ML Response:", JSON.stringify(mlResponse.data, null, 2));
-
-      // ✅ Wrap the ML service response in "result" as expected by frontend
-      res.json({
-        success: true,
-        message: "Analysis completed successfully",
-        result: mlResponse.data, // This is what your frontend expects!
-      });
-    } catch (error) {
-      console.error("❌ ML Service analysis error:", error.message);
-
-      if (error.code === "ECONNREFUSED") {
-        console.error(
-          "🚨 Cannot connect to ML service - is it running on port 8000?"
-        );
-      } else if (error.code === "ECONNABORTED") {
-        console.error(`🕐 Analysis timeout after ${ML_SERVICE_TIMEOUT}ms`);
-      }
-
-      // ✅ Return fallback response wrapped in "result"
-      res.status(503).json({
-        success: false,
-        message: "ML service is unavailable",
-        result: {
-          success: false,
-          has_json_output: false,
-          corrected_code: "",
-          issues: [],
-          raw_output: `ML service is unavailable: ${error.message}. Please make sure the ML service is running.`,
-          model_status: "error",
-          error: error.message,
-        },
-      });
-    }
-  }
+  codeAnalysisController.submitCode
 );
 
 /**
@@ -280,28 +221,3 @@ router.get("/:analysisId", auth(), codeAnalysisController.getAnalysis);
 router.delete("/:analysisId", auth(), codeAnalysisController.deleteAnalysis);
 
 module.exports = router;
-//SWAGGER REMOVED VERSION
-// const express = require("express");
-// const validate = require("../middleware/validation");
-// const { codeAnalysisController } = require("../controllers");
-// const analysisValidation = require("../validations/analysis.validation");
-
-// const router = express.Router();
-
-// // Submit code for analysis
-// router.post(
-//   "/submit",
-//   validate(analysisValidation.submitCode),
-//   codeAnalysisController.submitCode
-// );
-
-// // Get user's analysis history
-// router.get("/user/history", codeAnalysisController.getUserAnalyses);
-
-// // Get specific analysis results
-// router.get("/:analysisId", codeAnalysisController.getAnalysis);
-
-// // Delete an analysis
-// router.delete("/:analysisId", codeAnalysisController.deleteAnalysis);
-
-// module.exports = router;

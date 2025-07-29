@@ -1,4 +1,3 @@
-
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -118,9 +117,9 @@ async def analyze(req: AnalyzeRequest):
     
     try:
         tokenizer, model = get_model()
-        result = result = analyze_code(tokenizer, model, req.language, req.code)
+        # Fixed function call with correct parameter order
+        result = analyze_code(tokenizer, model, req.language, req.code)
 
-        
         if result is None:
             raise HTTPException(status_code=500, detail="Model failed to return any response.")
 
@@ -135,7 +134,7 @@ async def analyze(req: AnalyzeRequest):
         return {
             "bugs": result.get("bug_analysis", []),
             "corrected_code": result.get("corrected_code", ""),
-            "raw_output": ""
+            "raw_output": result.get("raw_output", "")
         }
     except Exception as e:
         logger.error(f"Analysis error: {e}")
@@ -174,8 +173,10 @@ async def analyze_for_frontend(req: AnalyzeRequest):
     
     try:
         tokenizer, model = get_model()
-        result = result = analyze_code(tokenizer, model, req.language, req.code)
-
+        # Fixed function call with correct parameter order
+        result = analyze_code(tokenizer, model, req.language, req.code)
+        
+        logger.info(f"📋 Analysis result type: {type(result)}")
         
         if result is None:
             return {
@@ -203,13 +204,17 @@ async def analyze_for_frontend(req: AnalyzeRequest):
         bugs = result.get("bug_analysis", [])
         issues = [transform_bug_to_issue(bug) for bug in bugs]
         corrected_code = result.get("corrected_code", "")
+        
+        logger.info(f"🐛 Found {len(issues)} issues")
+        logger.info(f"📝 Corrected code length: {len(corrected_code)} chars")
+        logger.info(f"🔧 Corrected code preview: {corrected_code[:100]}...")
 
         return {
             "success": True,
             "has_json_output": True,
             "corrected_code": corrected_code,
             "issues": issues,
-            "raw_output": "",
+            "raw_output": result.get("raw_output", ""),
             "model_status": "loaded"
         }
         
@@ -228,6 +233,7 @@ async def analyze_for_frontend(req: AnalyzeRequest):
 async def get_analysis_history():
     """Get analysis history (placeholder)"""
     return {"data": []}
+
 @app.get("/")
 async def root():
     return {
@@ -235,6 +241,7 @@ async def root():
         "status": "OK",
         "model_ready": is_model_loaded()
     }
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
